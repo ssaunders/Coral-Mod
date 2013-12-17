@@ -2,6 +2,8 @@ package coral;
 
 import java.util.ArrayList;
 
+import coral.BlockCoral.CORAL_TYPE;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -27,66 +29,63 @@ public class Coral {
 	public static Block redCoral;
 	public static Block blueCoral;
 	public static Block greenCoral;
-	
+
 	/***MOD STUFF***/
     // The instance of your mod that Forge uses.
     @Instance(ModInfo.NAME)
     public static Coral instance;
-   
+
     // Says where the client and server 'proxy' code is loaded.
     @SidedProxy(clientSide="coral.client.ClientProxy", serverSide="coral.CommonProxy")
     public static CommonProxy proxy;
-   
+
     @EventHandler // used in 1.6.2
     public void preInit(FMLPreInitializationEvent event) {
-    	coralBlock = new BlockCoral(500);
-    	redCoral   = new BlockCoralRed(501);
-    	blueCoral  = new BlockCoralBlue(502);
-    	greenCoral = new BlockCoralGreen(503);
+    	redCoral   = new BlockCoralRed(501+BlockCoral.CORAL_TYPE.RED.ordinal());
+    	blueCoral  = new BlockCoralBlue(501+BlockCoral.CORAL_TYPE.BLUE.ordinal());
+    	greenCoral = new BlockCoralGreen(501+BlockCoral.CORAL_TYPE.GREEN.ordinal());
+
+//    	coralBlock = new BlockCoral(500);
+//    	redCoral   = new BlockCoralRed(501);
+//    	blueCoral  = new BlockCoralBlue(502);
+//    	greenCoral = new BlockCoralGreen(503);
     }
-   
+
     @EventHandler // used in 1.6.2
     public void load(FMLInitializationEvent event) {
-    	
-    	GameRegistry.registerBlock(coralBlock, "coralBlock");
-    	LanguageRegistry.addName(coralBlock, "Generic Coral");
-    	MinecraftForge.setBlockHarvestLevel(coralBlock, "shovel", 0);
-    	MinecraftForge.setBlockHarvestLevel(coralBlock, "pickaxe", 0);
-    	MinecraftForge.setBlockHarvestLevel(coralBlock, "axe", 0);
-    	
     	GameRegistry.registerBlock(redCoral, "redCoral");
     	LanguageRegistry.addName(redCoral, "Red Coral");
     	MinecraftForge.setBlockHarvestLevel(redCoral, "shovel", 0);
     	MinecraftForge.setBlockHarvestLevel(redCoral, "pickaxe", 0);
     	MinecraftForge.setBlockHarvestLevel(redCoral, "axe", 0);
-    	
+
     	GameRegistry.registerBlock(blueCoral, "blueCoral");
     	LanguageRegistry.addName(blueCoral, "Blue Coral");
     	MinecraftForge.setBlockHarvestLevel(blueCoral, "shovel", 0);
     	MinecraftForge.setBlockHarvestLevel(blueCoral, "pickaxe", 0);
     	MinecraftForge.setBlockHarvestLevel(blueCoral, "axe", 0);
-    	
+
     	GameRegistry.registerBlock(greenCoral, "greenCoral");
     	LanguageRegistry.addName(greenCoral, "Green Coral");
     	MinecraftForge.setBlockHarvestLevel(greenCoral, "shovel", 0);
     	MinecraftForge.setBlockHarvestLevel(greenCoral, "pickaxe", 0);
     	MinecraftForge.setBlockHarvestLevel(greenCoral, "axe", 0);
-    	 
+
         proxy.registerRenderers();
     }
-   
+
     @EventHandler // used in 1.6.2
     public void postInit(FMLPostInitializationEvent event) {
         // Stub Method
     }
-    
-    
+
+
     /** UTILITY FUNCTIONS **/
 	public static boolean checkWater(World world, int x, int y, int z) {
 		if(world.getBlockMaterial(x, y, z) == Material.water ) {
-			
+
 			int blockID = world.getBlockId(x, y, z);
-			
+
 			if(blockID > 0 && blockID < Block.blocksList.length && !Coral.isCoral(blockID) ) {
 				return true;
 //				Block waterBlock = Block.blocksList[blockID];
@@ -97,13 +96,13 @@ public class Coral {
 			}
 			System.out.println("Unknown block ID: " + blockID);
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean isCoral(int blockID) {
 		// TODO: make this an array check pulled from config
-		return blockID > 500 && blockID < 503;
+		return blockID > 500 && blockID < CORAL_TYPE.RANDOM.ordinal();
 	}
-	
+
 }

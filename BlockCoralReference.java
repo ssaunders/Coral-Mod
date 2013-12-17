@@ -8,7 +8,7 @@ public class BlockCoralReference {
 
 	public BlockCoralReference(int id) {
 	}
-	
+
 	Point position;
 	CORAL_TYPE type;
 }

@@ -5,6 +5,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
 public class BlockCoralGreen extends BlockCoral {
+	private int individualGrowthVal(int brightness) {
+		return STD_GROWTH;
+	}
 
 	public BlockCoralGreen(int id) {
 		super(id);
@@ -12,7 +15,10 @@ public class BlockCoralGreen extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("greenCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":wool_colored_green");
+	    func_111022_d(ModInfo.NAME+":greenCoral");
+
+	    setHealth(FULL_HEALTH);
+	    setSplitPt(80);
     }
 
 }
