@@ -1,14 +1,10 @@
 package coral;
 
-import java.util.ArrayList;
-
-import coral.BlockCoral.CORAL_TYPE;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -25,10 +21,19 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 public class Coral {
 
 	/***BLOCK INSTANCES***/
-	public static Block coralBlock;
-	public static Block redCoral;
-	public static Block blueCoral;
-	public static Block greenCoral;
+	public static BlockCoral coralBlock;
+	public static BlockCoralRed redCoral;
+	public static Block orangeCoral;
+	public static Block yellowCoral;
+	public static BlockCoralBlue blueCoral;
+	public static BlockCoralGreen greenCoral;  
+	public static Block pinkCoral;
+	public static Block deepCoral;
+	public static Block weedCoral;
+	public static Block airCoral;
+	public static CoralCommandBlock commandBlock;
+	
+	public static int growthEquation=0;
 
 	/***MOD STUFF***/
     // The instance of your mod that Forge uses.
@@ -41,14 +46,12 @@ public class Coral {
 
     @EventHandler // used in 1.6.2
     public void preInit(FMLPreInitializationEvent event) {
-    	redCoral   = new BlockCoralRed(501+BlockCoral.CORAL_TYPE.RED.ordinal());
-    	blueCoral  = new BlockCoralBlue(501+BlockCoral.CORAL_TYPE.BLUE.ordinal());
-    	greenCoral = new BlockCoralGreen(501+BlockCoral.CORAL_TYPE.GREEN.ordinal());
-
-//    	coralBlock = new BlockCoral(500);
-//    	redCoral   = new BlockCoralRed(501);
-//    	blueCoral  = new BlockCoralBlue(502);
-//    	greenCoral = new BlockCoralGreen(503);
+    	int first = 500;
+    	commandBlock = new CoralCommandBlock(first - 1);
+    	coralBlock = new BlockCoral(first);
+    	redCoral   = new BlockCoralRed(  CORAL_TYPE.getBlockId(CORAL_TYPE.RED));
+    	blueCoral  = new BlockCoralBlue( CORAL_TYPE.getBlockId(CORAL_TYPE.BLUE));
+    	greenCoral = new BlockCoralGreen(CORAL_TYPE.getBlockId(CORAL_TYPE.GREEN));
     }
 
     @EventHandler // used in 1.6.2
@@ -70,6 +73,9 @@ public class Coral {
     	MinecraftForge.setBlockHarvestLevel(greenCoral, "shovel", 0);
     	MinecraftForge.setBlockHarvestLevel(greenCoral, "pickaxe", 0);
     	MinecraftForge.setBlockHarvestLevel(greenCoral, "axe", 0);
+    	
+    	GameRegistry.registerBlock(commandBlock, "cmdCoralBlock");
+    	LanguageRegistry.addName(commandBlock, "Coral Command Block");
 
         proxy.registerRenderers();
     }
@@ -81,7 +87,7 @@ public class Coral {
 
 
     /** UTILITY FUNCTIONS **/
-	public static boolean checkWater(World world, int x, int y, int z) {
+	public static boolean isWater(World world, int x, int y, int z) {
 		if(world.getBlockMaterial(x, y, z) == Material.water ) {
 
 			int blockID = world.getBlockId(x, y, z);
@@ -94,7 +100,7 @@ public class Coral {
 //					return waterStationary == stationary;
 //				}
 			}
-			System.out.println("Unknown block ID: " + blockID);
+//			System.out.println("Unknown block ID: " + blockID);
 		}
 
 		return false;
@@ -102,7 +108,7 @@ public class Coral {
 
 	public static boolean isCoral(int blockID) {
 		// TODO: make this an array check pulled from config
-		return blockID > 500 && blockID < CORAL_TYPE.RANDOM.ordinal();
+		return blockID > 500 && blockID < 500+CORAL_TYPE.RANDOM.ordinal();
 	}
 
 }

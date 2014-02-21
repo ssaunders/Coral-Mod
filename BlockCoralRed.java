@@ -6,21 +6,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
+//THE PICKY EATER
 public class BlockCoralRed extends BlockCoral {
-	private int individualGrowthVal(int brightness) {
-		return STD_GROWTH;
-	}
-
 	public BlockCoralRed(int id) {
-		super(id);
+		super(id, CORAL_TYPE.RED, 70, 30, 60, 10, 3, 3, 3);
 		setHardness(0.5F);
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("redCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
 	    func_111022_d(ModInfo.NAME+":redCoral");
-
-	    setHealth(FULL_HEALTH);
-	    setSplitPt(80);
 	}
 
 }

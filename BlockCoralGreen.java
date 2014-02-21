@@ -4,21 +4,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
+//THE COLONIST
 public class BlockCoralGreen extends BlockCoral {
-	private int individualGrowthVal(int brightness) {
-		return STD_GROWTH;
-	}
-
 	public BlockCoralGreen(int id) {
-		super(id);
+		super(id, CORAL_TYPE.GREEN, 30, 20, 25, 5, 3, 3, 3);
 		setHardness(0.5F);
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("greenCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
 	    func_111022_d(ModInfo.NAME+":greenCoral");
-
-	    setHealth(FULL_HEALTH);
-	    setSplitPt(80);
     }
 
 }
