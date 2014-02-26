@@ -32,8 +32,6 @@ public class Coral {
 	public static Block weedCoral;
 	public static Block airCoral;
 	public static CoralCommandBlock commandBlock;
-	
-	public static int growthEquation=0;
 
 	/***MOD STUFF***/
     // The instance of your mod that Forge uses.
@@ -108,7 +106,7 @@ public class Coral {
 
 	public static boolean isCoral(int blockID) {
 		// TODO: make this an array check pulled from config
-		return blockID > 500 && blockID < 500+CORAL_TYPE.RANDOM.ordinal();
+		return blockID >= 500 && blockID < 501+CORAL_TYPE.getNumberOfCoral();
 	}
 
 }

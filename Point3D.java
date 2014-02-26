@@ -25,6 +25,7 @@ public class Point3D extends Point
         setZ(z);
     }
 
+
     /**
       The setZ method sets the Z coordinate.
       @param z The value for the Z coordinate.
@@ -50,8 +51,11 @@ public class Point3D extends Point
     	setZ(z);
     }
     
-    public String toString () { 
+    public String toString() { 
     	return "coral.Point3D[x="+x+",y="+y+",z="+z+"]";
+    }
+    public String toPoint() { 
+    	return "("+x+","+y+","+z+")";
     }
     
     @Override

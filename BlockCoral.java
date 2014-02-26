@@ -1,6 +1,9 @@
 package coral;
 
+import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -9,7 +12,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
 public class BlockCoral extends Block {
-
+	private boolean printMsgs = CoralCommandBlock.showMessages();
 	// // General Functions/Variables // // 
 	public static enum CORAL_TYPE {
 		RED, ORANGE, YELLOW, GREEN, BLUE, PINK, DEEP, WEED, AIR, RANDOM;
@@ -18,9 +21,31 @@ public class BlockCoral extends Block {
 		public static int getBlockId(CORAL_TYPE t) {
 			return t.ordinal()+OFFSET;
 		}
+		/** Subtracts the offset to allow for indexing into an array */
+		public static int toIndex(int blockId){
+			return blockId - OFFSET;
+		}
 		
 		public static String getCoralName(int id) {
-			return values()[id-OFFSET].name();
+			if(id-OFFSET > 0 && id-OFFSET < values().length) 
+				return values()[id-OFFSET].name();
+			else 
+				return null;
+		}
+		
+		private static String csvFormat;
+		public static String toCsv() {
+			if(csvFormat == null) {				
+				StringBuilder j = new StringBuilder();
+				CORAL_TYPE[] vals = values();
+				j.append(vals[0].name());
+				for(int i = 1; i < getNumberOfCoral(); ++i) {
+					j.append(","+vals[i].name());
+				}
+				
+				csvFormat = j.toString();
+			}
+			return csvFormat;
 		}
 		
 		public static CORAL_TYPE getRandomType(int limit) {
@@ -60,8 +85,14 @@ public class BlockCoral extends Block {
 	//health
 	public int getHealth(int x, int y, int z) { 
 		Integer q = healthMeter.get(new Point3D(x, y, z));
-		return (q == null ? startingHealth : q);
+		if(q == null) {
+			System.out.println("!!!! No health entry for ("+x+","+y+","+z+")");
+			return -1;
+		} else {
+			return q.intValue();
+		}
 	}
+
 	public int getStartHealth() { return startingHealth; }
 	public int getSplitPt() { return splitPoint; }
 	private void setHealthVars(int max, int start, int split) {
@@ -122,14 +153,34 @@ public class BlockCoral extends Block {
 	/***/
 	//TYPE 
 	private final CORAL_TYPE type;
-	public CORAL_TYPE getType() {
-		return type;
+	public static CORAL_TYPE getType(World world, int x, int y, int z) {	//? do these fns belong here?
+		int id = world.getBlockId(x, y, z);
+		if(Coral.isCoral(id))
+			return CORAL_TYPE.values()[id];
+		else 
+			return null; 
+	}
+	public static String getTypeName(World world, int x, int y, int z) {
+		return CORAL_TYPE.getCoralName(world.getBlockId(x, y, z));
+	}
+	public static int getTypeId(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if(Coral.isCoral(id))
+			return id;
+		else 
+			return -1; 
 	}
 	
 	private int numCoral = 0;	//TODO fix onBlockAdded returning 0 for starting health
-	public void addCoral(World world, Point3D spot, int blockID) {
-		world.setBlock(spot.x, spot.y, spot.z, blockID);
-		++numCoral;
+	public boolean addCoral(World world, Point3D spot, int blockID) {
+		if(canPlaceBlockAt(world, spot.x, spot.y, spot.z)) {			
+			world.setBlock(spot.x, spot.y, spot.z, blockID);
+			++numCoral;
+			return true;
+		} else {
+			System.out.println("!!!! Cannot add coral at "+spot.toPoint());
+			return false;
+		}
 	}
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
@@ -195,11 +246,13 @@ public class BlockCoral extends Block {
 
 		int healthModifier = -livingCost;
 		
-		Integer val = healthMeter.get(new Point3D(x,y,z));//!D vvv
-		if(val != null) {			
-			System.out.println(CORAL_TYPE.getCoralName(this.blockID)+" Coral at ("+ x+", "+y+", "+z+") Num Nghbr: "+numNeighbors+" health: "+ val.intValue());
-		} else {
-			System.out.println("No health record for ("+x+","+y+","+z+")");
+		if(printMsgs) {
+			Integer val = healthMeter.get(new Point3D(x,y,z));//!D vvv
+			if(val == null) {	
+				System.out.println("No health record for ("+x+","+y+","+z+")");
+			} else {
+				System.out.println(CORAL_TYPE.getCoralName(this.blockID)+" Coral at ("+ x+", "+y+", "+z+") Num Nghbr: "+numNeighbors+" health: "+ val.intValue());
+			}
 		}
 		
 //		int y1 = world.getFirstUncoveredBlock(x, z); //from sea level, BLOCK ID
@@ -209,10 +262,9 @@ public class BlockCoral extends Block {
 		
 //		System.out.println("("+x+","+z+") unc: "+y1+" hgt: "+y2+" top: "+y3);
 //*	////////////
-		Integer q = healthMeter.get(new Point3D(x, y, z));
-		switch (Coral.growthEquation) {
+		switch (getCurrentGrowthEq()) {
 			case 0:
-				healthModifier += equation0(neighbors, numNeighbors, brightness, (q != null ? q.intValue() : -1) );
+				healthModifier += equation0(neighbors, numNeighbors, brightness);
 				break;
 			default:
 				break;
@@ -400,13 +452,12 @@ public class BlockCoral extends Block {
 					//do nothing on middle squares
 				} else {
 					northSouth = ns_ary[zItr];
-					for(int position= -2; position < 1 && !placeable; ++position) { //y
+					for(int position= -2; position < 1 && !placeable; ++position) { //y		//TODO refactor to consider world.getTopSolidOrLiquidBlock
 						groundBlock = y+position;
 						if(canPlaceBlockAt(world, x+eastWest, groundBlock+1, z+northSouth)) {  //aboveBlock
 							placeable = true;
 							returnVal = new Point3D(x+eastWest, y+position+1, z+northSouth); //add ranking?
 						}
-//						System.out.println("("+(x+eastWest)+","+(y+position)+","+(z+northSouth)+")");
 					} // y loop
 				} //if
 			} //z loop
@@ -420,9 +471,21 @@ public class BlockCoral extends Block {
 	}
 	
 	// // GROWTH EQUATIONS // //
+	private int numEqs = 1;
+	private int growthEquation=0;
+	public int getCurrentGrowthEq() {
+		return growthEquation;
+	}
+	public void setGrowthEq(int val) {
+		if(val > 0 && val < numEqs-1) {
+			growthEquation = val;
+		} else {
+			System.out.println("!!!! Improper growth equation: "+val);
+		}
+	}
 	
 	//Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor)
-	private int equation0(CoralInfo[] neighbors, int numNeighbors, int lightLvl, int currHealth) { //!D currHealth is temp
+	private int equation0(CoralInfo[] neighbors, int numNeighbors, int lightLvl) { //!D currHealth is temp
 		int ngbrVal = 0, growth=0;
 		
 		if(neighbors != null) {
@@ -443,8 +506,7 @@ public class BlockCoral extends Block {
 		}
 		
 		//!D
-		System.out.println("("+type.name()+") Growth ["+(currHealth+ngbrVal+growth)+"] "
-							  +growth+" "+ngbrVal+" -"+livingCost+" ("+(growth+ngbrVal-livingCost)+")");
+		System.out.println("("+type.name()+") Growth "+(growth+ngbrVal-livingCost)+" ("+growth+","+ngbrVal+",-"+livingCost+")");
 		return ngbrVal+growth;
 	}
 
