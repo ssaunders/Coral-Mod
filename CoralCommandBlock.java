@@ -10,17 +10,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.Sys;
-
-import com.sun.xml.internal.ws.util.StringUtils;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,7 +27,7 @@ public class CoralCommandBlock extends BlockContainer {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 	/* GENERAL TEST INFORMATION */
-	private final Point3D TEST_DIMS = new Point3D(19,0,9);
+	private final Point3D TEST_DIMS = new Point3D(50,0,50);
 	/**Dimensions is the actual w/h/l of the area it to survey.
 	 * It is NOT a point in 3D.
 	 */
@@ -47,8 +45,8 @@ public class CoralCommandBlock extends BlockContainer {
 							}
 						}
 					}
-					dimensions = new Point3D(newDims.x, y-lowestPoint-1, newDims.z);
-					if(lowestPoint < 2) { System.out.println("!!!! Lowest point is <2. Test will be ineffective."); }
+					dimensions = new Point3D(newDims.x, y-lowestPoint, newDims.z);
+					if(y-lowestPoint < 2) { System.out.println("!!!! Test height is <2. Tests will be ineffective."); }
 				} else {
 					dimensions = newDims;
 				}
@@ -95,7 +93,8 @@ public class CoralCommandBlock extends BlockContainer {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);
 		
@@ -106,7 +105,7 @@ public class CoralCommandBlock extends BlockContainer {
 		/*  TEST SETUP  */
 		//TEST 1
 		int x = 1, z = 1;
-		TestConfig one = new TestConfig(0, "Just a test");
+		TestConfig one = new TestConfig(0, 0, "Just a test");
 		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
 		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
 		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
@@ -116,7 +115,16 @@ public class CoralCommandBlock extends BlockContainer {
 		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
 		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
 		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
+		tests.add(one); //1
 		tests.add(one);
+		tests.add(one);
+//		tests.add(one);
+//		tests.add(one); //5
+//		tests.add(one);
+//		tests.add(one);
+//		tests.add(one);
+//		tests.add(one);
+//		tests.add(one); //10
 		
 		//TEST 2
 		//....
@@ -323,6 +331,14 @@ public class CoralCommandBlock extends BlockContainer {
 		}
 		
 		killAll(world, x, y, z);
+		long q = System.currentTimeMillis();
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		long t = System.currentTimeMillis();
+		System.out.println("finished killing things: "+timeToMin(t-q));
 		runNumber++;
 		surveyNum = 0;
 		do {	//start the next test. This may involve skipping a test.
@@ -384,7 +400,7 @@ public class CoralCommandBlock extends BlockContainer {
 		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {			
 			for(int zPos = z+1; zPos < z + dimensions.z; ++zPos) {
 				//3-scan
-				for(int yPos = y-1; yPos > y - dimensions.y; --yPos) {
+				for(int yPos = y-1; yPos >= y - dimensions.y; --yPos) {	//TODO test if >= works ok
 					int bId = world.getBlockId(xPos, yPos, zPos);
 					if(Coral.isCoral(bId)){
 						tempHealth = Coral.coralBlock.getHealth(xPos, yPos, zPos);
@@ -445,6 +461,7 @@ public class CoralCommandBlock extends BlockContainer {
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
 					System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
 					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
+					world.getBlockId(x+xIncr, yPos, z+zIncr);	//!D
 				}
 			}
 		}
@@ -537,6 +554,8 @@ public class CoralCommandBlock extends BlockContainer {
 			return numTypes;
 		}
 
+		/**Equation to use for this test */
+		int equationNum = -1;
 		int numTypes = -1;
 		int duration; //in milliseconds
 		String details;
@@ -562,8 +581,9 @@ public class CoralCommandBlock extends BlockContainer {
 		
 		/* CONSTRUCTOR */
 		/** Length is in minutes. Notes will be added to a separate text file. **/
-		public TestConfig(int length, String notes) {
-			duration = length < 5 ? 5 * 60 * 1000 : length * 60 * 1000;
+		public TestConfig(int length, int eq, String notes) {
+			equationNum = (eq > 0 ? eq : 0);
+			duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 			details = notes;
 		}
 		
@@ -614,6 +634,7 @@ public class CoralCommandBlock extends BlockContainer {
 				getCurrentTest().addError("^ Fewer coral placed than planned "+numCoralPlaced+" of "+size+". "+goodKeys);
 				success = false;
 			}
+			BlockCoral.setGrowthEq(equationNum);
 			return success;
 		}
 		

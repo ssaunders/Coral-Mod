@@ -1,9 +1,6 @@
 package coral;
 
-import java.awt.HeadlessException;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
 //THE PICKY EATER
@@ -14,7 +11,8 @@ public class BlockCoralRed extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("redCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":redCoral");
+//	    func_111022_d(ModInfo.NAME+":redCoral");
+	    setTextureName(ModInfo.NAME+":redCoral");
 	}
 
 }

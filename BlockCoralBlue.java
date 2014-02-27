@@ -1,7 +1,6 @@
 package coral;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
 //THE PHILANTHROPIST
@@ -12,7 +11,8 @@ public class BlockCoralBlue extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("blueCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":blueCoral");
+//	    func_111022_d(ModInfo.NAME+":blueCoral");
+	    setTextureName(ModInfo.NAME+":blueCoral");
 	}
 
 }

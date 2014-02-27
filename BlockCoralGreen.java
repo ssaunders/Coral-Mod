@@ -1,7 +1,6 @@
 package coral;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
 //THE COLONIST
@@ -12,7 +11,8 @@ public class BlockCoralGreen extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("greenCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":greenCoral");
+//	    func_111022_d(ModInfo.NAME+":greenCoral");
+	    setTextureName(ModInfo.NAME+":greenCoral");
     }
 
 }

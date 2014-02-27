@@ -1,9 +1,6 @@
 package coral;
 
-import java.io.PrintStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -178,7 +175,10 @@ public class BlockCoral extends Block {
 			++numCoral;
 			return true;
 		} else {
-			System.out.println("!!!! Cannot add coral at "+spot.toPoint());
+			System.out.println("!!!! Cannot add coral at "+spot.toPoint()
+					+" "+world.getBlockId(spot.x, spot.y+1, spot.z)
+					+" "+world.getBlockId(spot.x, spot.y, spot.z)
+					+" "+world.getBlockId(spot.x, spot.y-1, spot.z));
 			return false;
 		}
 	}
@@ -189,8 +189,14 @@ public class BlockCoral extends Block {
 	}
 	
 	public void removeCoral(World world, int x, int y, int z) {
-		world.destroyBlock(x, y, z, false);
-		healthMeter.put(new Point3D(x,y,z), -1);	//? Remove?
+		if(Coral.isCoral(world.getBlockId(x, y, z)) ) {
+			System.out.println("deleting "+world.getBlockId(x, y, z));
+			world.destroyBlock(x, y, z, false);
+			System.out.println("deleting "+world.getBlockId(x, y, z));
+			healthMeter.put(new Point3D(x,y,z), -1);	//? Remove?
+		} else {
+			System.out.println("!!!! Tried to destroy coral and got "+world.getBlockId(x, y, z));
+		}
 	}
 	@Override
 	public void onBlockDestroyedByPlayer(World par1World, int x, int y, int z, int par5) {
@@ -250,8 +256,9 @@ public class BlockCoral extends Block {
 			Integer val = healthMeter.get(new Point3D(x,y,z));//!D vvv
 			if(val == null) {	
 				System.out.println("No health record for ("+x+","+y+","+z+")");
-			} else {
-				System.out.println(CORAL_TYPE.getCoralName(this.blockID)+" Coral at ("+ x+", "+y+", "+z+") Num Nghbr: "+numNeighbors+" health: "+ val.intValue());
+				return;
+//			} else {
+//				System.out.println(CORAL_TYPE.getCoralName(this.blockID)+" Coral at ("+ x+", "+y+", "+z+") Num Nghbr: "+numNeighbors+" health: "+ val.intValue());
 			}
 		}
 		
@@ -314,10 +321,6 @@ public class BlockCoral extends Block {
 		 * 	14	0.77777773
 		 * 	15	1
 		 */
-		
-//		if(s < 1) {
-//			return false;
-//		}
 		
 		//if the block is water and the block above it is water as well.
 		if(isWaterBlock && Coral.isWater(world, x, y + 1, z) && isSuitableGround(world, x, y-1, z)) {
@@ -471,20 +474,20 @@ public class BlockCoral extends Block {
 	}
 	
 	// // GROWTH EQUATIONS // //
-	private int numEqs = 1;
-	private int growthEquation=0;
-	public int getCurrentGrowthEq() {
+	private static int numEqs = 1;	//MAKE SURE TO UPDATE THIS NUMBER
+	private static int growthEquation=0;
+	public static int getCurrentGrowthEq() {
 		return growthEquation;
 	}
-	public void setGrowthEq(int val) {
-		if(val > 0 && val < numEqs-1) {
+	public static void setGrowthEq(int val) {
+		if(val >= 0 && val < numEqs) {
 			growthEquation = val;
 		} else {
 			System.out.println("!!!! Improper growth equation: "+val);
 		}
 	}
 	
-	//Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor)
+	/** Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) NO DEATH RULE*/
 	private int equation0(CoralInfo[] neighbors, int numNeighbors, int lightLvl) { //!D currHealth is temp
 		int ngbrVal = 0, growth=0;
 		
@@ -506,7 +509,34 @@ public class BlockCoral extends Block {
 		}
 		
 		//!D
-		System.out.println("("+type.name()+") Growth "+(growth+ngbrVal-livingCost)+" ("+growth+","+ngbrVal+",-"+livingCost+")");
+//		System.out.println("("+type.name()+") Growth "+(growth+ngbrVal-livingCost)+" ("+growth+","+ngbrVal+",-"+livingCost+")");
+		return ngbrVal+growth;
+	}
+	
+	/** Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) */
+	private int equation1(CoralInfo[] neighbors, int numNeighbors, int lightLvl) { //!D currHealth is temp
+		int ngbrVal = 0, growth=0;
+		int threshold = 4, friends = 0, enemies = 0;
+		
+		if(neighbors != null) {
+			for(int i = 0; i < numNeighbors; ++i) {
+				if(neighbors[i].type == this.type){
+					++friends;
+				} else {
+					++enemies;
+				}
+			}
+		}
+		
+		
+		lightLvl = ((lightLvl+1) / 4);
+		if(lightLvl < photoFactor) {
+			growth += lightLvl;
+		} else {
+			growth += photoFactor;
+		}
+		
+//		System.out.println("("+type.name()+") Growth "+(growth+ngbrVal-livingCost)+" ("+growth+","+ngbrVal+",-"+livingCost+")");
 		return ngbrVal+growth;
 	}
 
