@@ -6,6 +6,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.world.World;
 
 public class BlockCoral extends Block {
@@ -63,7 +64,7 @@ public class BlockCoral extends Block {
 	/** Variables are added together for a final total	//!D it would be nice to make these final
 	/*****/
 	private int   maxHealth;		 //! (22-100)
-	    private static HashMap<Point3D, Integer> healthMeter; //the actual health of the coral	 TODO make this like the ender chest, where it attaches to a player
+	    private static HashMap<Point3D, Integer> healthMeter; //the actual health of the coral
 	private int   startingHealth;	 //! (22-100) Beginning health of new coral 
 	private int   splitPoint; 	 	 //! (22-100) Percentage at which coral divides (eg. creates new block).
 	private int   expansionCost;	 //! (5-15) Cost of reproducing
@@ -102,7 +103,9 @@ public class BlockCoral extends Block {
 		split = (split < startingHealth ? startingHealth : split);
 		splitPoint = (split > maxHealth ? maxHealth : split);
 	}
-	private void grow(int amount, int x, int y, int z) { //health can be negative
+	
+	/** Adds amount to the health of the coral at (x,y,z). Health can be negative */
+	private void grow(int amount, int x, int y, int z) {
 		Point3D pt = new Point3D(x, y, z);
 		Integer val = healthMeter.get(pt);
 		if(val != null) {			
@@ -168,7 +171,10 @@ public class BlockCoral extends Block {
 			return -1; 
 	}
 	
-	private int numCoral = 0;	//TODO fix onBlockAdded returning 0 for starting health
+	private int numCoral = 0;
+
+
+	private int supportsNumOfEq;
 	public boolean addCoral(World world, Point3D spot, int blockID) {
 		if(canPlaceBlockAt(world, spot.x, spot.y, spot.z)) {			
 			world.setBlock(spot.x, spot.y, spot.z, blockID);
@@ -190,9 +196,8 @@ public class BlockCoral extends Block {
 	
 	public void removeCoral(World world, int x, int y, int z) {
 		if(Coral.isCoral(world.getBlockId(x, y, z)) ) {
-			System.out.println("deleting "+world.getBlockId(x, y, z));
-			world.destroyBlock(x, y, z, false);
-			System.out.println("deleting "+world.getBlockId(x, y, z));
+//			world.destroyBlock(x, y, z, false);
+			world.setBlock(x, y, z, 9);
 			healthMeter.put(new Point3D(x,y,z), -1);	//? Remove?
 		} else {
 			System.out.println("!!!! Tried to destroy coral and got "+world.getBlockId(x, y, z));
@@ -262,20 +267,24 @@ public class BlockCoral extends Block {
 			}
 		}
 		
-//		int y1 = world.getFirstUncoveredBlock(x, z); //from sea level, BLOCK ID
-//		int y2 = world.getHeightValue(x,z);	//includes water; is really getTopSolidOrLiquidBlock
-//		int y3 = world.getTopSolidOrLiquidBlock(x, z); //highest SOLID block; is really getHeightValue
-//		world.setBlockMetadataWithNotify(x, y, z, id, meta, flags);
-		
-//		System.out.println("("+x+","+z+") unc: "+y1+" hgt: "+y2+" top: "+y3);
-//*	////////////
 		switch (getCurrentGrowthEq()) {
 			case 0:
 				healthModifier += equation0(neighbors, numNeighbors, brightness);
 				break;
+			case 1:
+				healthModifier += equation1(neighbors, numNeighbors, 4, brightness);
+				break;
+			case 2:
+				healthModifier += equation1(neighbors, numNeighbors, 5, brightness);
+				break;
+			case 3:
+				healthModifier += equation1(neighbors, numNeighbors, 6, brightness);
+				break;
 			default:
+				System.out.println("!!!! Growth equation "+getCurrentGrowthEq()+" does not exist.");
 				break;
 		}
+		supportsNumOfEq = 4;
 		
 		grow(healthModifier, x, y, z);
 		
@@ -474,7 +483,7 @@ public class BlockCoral extends Block {
 	}
 	
 	// // GROWTH EQUATIONS // //
-	private static int numEqs = 1;	//MAKE SURE TO UPDATE THIS NUMBER
+	public static int numEqs = 4;	//MAKE SURE TO UPDATE THIS NUMBER
 	private static int growthEquation=0;
 	public static int getCurrentGrowthEq() {
 		return growthEquation;
@@ -509,14 +518,13 @@ public class BlockCoral extends Block {
 		}
 		
 		//!D
-//		System.out.println("("+type.name()+") Growth "+(growth+ngbrVal-livingCost)+" ("+growth+","+ngbrVal+",-"+livingCost+")");
 		return ngbrVal+growth;
 	}
 	
-	/** Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) */
-	private int equation1(CoralInfo[] neighbors, int numNeighbors, int lightLvl) { //!D currHealth is temp
+	/** Equation 1-3: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) */
+	private int equation1(CoralInfo[] neighbors, int numNeighbors, int threshold, int lightLvl) { //!D currHealth is temp
 		int ngbrVal = 0, growth=0;
-		int threshold = 4, friends = 0, enemies = 0;
+		int friends = 0, enemies = 0;
 		
 		if(neighbors != null) {
 			for(int i = 0; i < numNeighbors; ++i) {
@@ -528,6 +536,11 @@ public class BlockCoral extends Block {
 			}
 		}
 		
+		if(friends + enemies > threshold) {
+			ngbrVal = -2;
+		} else {
+			ngbrVal = (-enemies + friends);
+		}
 		
 		lightLvl = ((lightLvl+1) / 4);
 		if(lightLvl < photoFactor) {
@@ -536,7 +549,6 @@ public class BlockCoral extends Block {
 			growth += photoFactor;
 		}
 		
-//		System.out.println("("+type.name()+") Growth "+(growth+ngbrVal-livingCost)+" ("+growth+","+ngbrVal+",-"+livingCost+")");
 		return ngbrVal+growth;
 	}
 
