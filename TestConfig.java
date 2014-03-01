@@ -88,7 +88,13 @@ public class TestConfig {
 		}
     
     private String prefix = "";
-    	public void addPrefix(String s) { prefix = s; }
+    	public void addPrefix(String s) { prefix = s.concat("_"); }
+    	public String getPrefix() { return prefix; }
+    	
+    private String testIdentifier;
+	    public String getTestSignature() {
+	    	return "("+testIdentifier+","+getColors()+","+getGrowthEq()+")";
+	    }
 
 	/** Returns if the elapsed time is longer than the duration*/
 	public boolean hasTimeElapsed() {
@@ -107,12 +113,14 @@ public class TestConfig {
 	
 	/* CONSTRUCTOR */
 	/** Length is in minutes. Notes will be added to a separate text file. **/
-	public TestConfig(int length, int eq, String notes) {
+	public TestConfig(String key, int length, int eq, String notes) {
+		testIdentifier = key;
 		equationNum = (eq > 0 ? eq : 0);
 		duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 		details = notes;
 	}
-	public TestConfig(int length, int eq, String notes, String pfx) {
+	public TestConfig(String key, int length, int eq, String notes, String pfx) {
+		testIdentifier = key;
 		equationNum = (eq > 0 ? eq : 0);
 		duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 		details = notes;
@@ -171,7 +179,6 @@ public class TestConfig {
 			addError(error);
 			success = true;	//with errors, but still true
 		}
-		BlockCoral.setGrowthEq(equationNum);
 		return success;
 	}
 

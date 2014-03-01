@@ -6,7 +6,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.world.World;
 
 public class BlockCoral extends Block {
@@ -175,8 +174,6 @@ public class BlockCoral extends Block {
 	
 	private int numCoral = 0;
 
-
-	private int supportsNumOfEq;
 	public boolean addCoral(World world, Point3D spot, int blockID) {
 		if(canPlaceBlockAt(world, spot.x, spot.y, spot.z)) {			
 			world.setBlock(spot.x, spot.y, spot.z, blockID);
@@ -217,8 +214,6 @@ public class BlockCoral extends Block {
 		setHardness(0.5F);
 		setStepSound(Block.soundStoneFootstep);
 
-		CoralCommandBlock cmbBlock = Coral.commandBlock;
-
 	    if(suitableGround.size() == 0) {
 			suitableGround.add(Material.ground);
 			suitableGround.add(Material.rock);
@@ -250,6 +245,7 @@ public class BlockCoral extends Block {
 		}
 	}
 
+	private int supportsNumOfEq;
 	// // MINECRAFT FUNCTIONS // //
 	@Override	// One 'turn'. Grow, then split or die
 	public void updateTick(World world, int x, int y, int z, Random random) {
@@ -287,7 +283,7 @@ public class BlockCoral extends Block {
 				healthModifier += equation1(neighbors, numNeighbors, 6, brightness);
 				break;
 			default:
-				System.out.println("!!!! Growth equation "+getCurrentGrowthEq()+" does not exist.");
+				System.out.println("!!!! Growth equation "+t.getGrowthEq()+" does not exist.");
 				break;
 		}
 		
@@ -491,17 +487,6 @@ public class BlockCoral extends Block {
 	
 	// // GROWTH EQUATIONS // //
 	public static int numEqs = 4;	//MAKE SURE TO UPDATE THIS NUMBER
-	private static int growthEquation=0;
-	public static int getCurrentGrowthEq() {
-		return growthEquation;
-	}
-	public static void setGrowthEq(int val) {
-		if(val >= 0 && val < numEqs) {
-			growthEquation = val;
-		} else {
-			System.out.println("!!!! Improper growth equation: "+val);
-		}
-	}
 	
 	/** Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) NO DEATH RULE*/
 	private int equation0(CoralInfo[] neighbors, int numNeighbors, int lightLvl) { //!D currHealth is temp

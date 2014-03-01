@@ -8,7 +8,7 @@ public class TestFactory {
 		Point3D dims = CoralCommandBlock.getDims();
 		int halfX = dims.x/2;
 		int halfZ = dims.z/2;
-		TestConfig t = new TestConfig(4, eq, "Testing equation "+eq+" for GREEN");
+		TestConfig t = new TestConfig("LIN", length, eq, "Testing equation "+eq+" for GREEN");
 		
 		t.addSeed(halfX, halfZ-3, type);
 		t.addSeed(halfX, halfZ-2, type);
@@ -22,7 +22,7 @@ public class TestFactory {
 	}
 
 	public static TestConfig getScatteredTest(int length, int eq, CORAL_TYPE type) {
-		TestConfig t = new TestConfig(20, eq, "Scattered test for "+type.name()); //do we need notes?
+		TestConfig t = new TestConfig("SCA",length, eq, "Scattered test for "+type.name()); //do we need notes?
 		
 		int spacer = 10;
 		//creates a grid of coral
@@ -36,7 +36,7 @@ public class TestFactory {
 	}
 	
 	public static TestConfig get4GroupTest(int length, int eq, CORAL_TYPE type ) {
-		TestConfig t = new TestConfig(length, eq, "4 group test for "+type+" using threshold of "+(eq+3) );
+		TestConfig t = new TestConfig("4GT",length, eq, "4 group test for "+type+" using threshold of "+(eq+3) );
 		
 		Point3D dims = CoralCommandBlock.getDims(); 
 		int halfX = dims.x/2;
@@ -50,14 +50,14 @@ public class TestFactory {
 	}
 	
 	public static TestConfig getOneDirTest(int length, int eq, CORAL_TYPE type) {
-		TestConfig t = new TestConfig(50, eq, "Single direction spread test for "+type.name()+" using threshold of "+(eq+3));
+		TestConfig t = new TestConfig("1DIR",length, eq, "Single direction spread test for "+type.name()+" using threshold of "+(eq+3));
 		t.addSeed(1, 1, type);
 		return t;
 	}
 	
 	public static TestConfig getDiagonalTest(int length, int eq, CORAL_TYPE type) {
 		int x = 1, z = 1;
-		TestConfig t = new TestConfig(length, eq, "Diagonal test for "+type.name());
+		TestConfig t = new TestConfig("DIAG",length, eq, "Diagonal test for "+type.name());
 		
 		t.addSeed(x++, z++, type);
 		t.addSeed(x++, z++, type);
@@ -73,7 +73,7 @@ public class TestFactory {
 	}
 	
 	public static TestConfig getFullTest(int length, int eq, CORAL_TYPE type) {
-		TestConfig t = new TestConfig(length, eq, "Full test for "+type.name());
+		TestConfig t = new TestConfig("FUL",length, eq, "Full test for "+type.name());
 		
 		Point3D dims = CoralCommandBlock.getDims();
 		for(int x = dims.x; x > 0; --x) {			

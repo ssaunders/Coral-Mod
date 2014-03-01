@@ -16,9 +16,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -27,15 +24,53 @@ public class CoralCommandBlock extends BlockContainer {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 	
+	@SuppressWarnings("unused")
+	private void setupTests() {		/// AREA IS 1 INDEXED
+		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
+		
+//		//do so for eq 1,2,3
+//		for(int eq = 3; eq > 0; --eq) {
+//			for(int i = 0; i< types.length; ++i) {
+//				tests.add(TestFactory.get4GroupTest(30, eq, types[i]));
+//			}
+//			
+//			for(int i = types.length; i > 0; --i) {
+//				tests.add(TestFactory.getOneDirTest(40, eq, types[i]));
+//			}
+//			
+//			for(int i = types.length; i > 0; --i) {
+//				tests.add(TestFactory.getScatteredTest(20, eq, types[i]));
+//			}
+//			
+//			for(int i = types.length; i > 0; --i) {
+//				tests.add(TestFactory.getFullTest(20, eq, types[i]));
+//			}
+//		}
+
+		tests.add(TestFactory.get4GroupTest(10, 2, CORAL_TYPE.GREEN));
+		
+		
+		int totalTime = getAllTestsApxRunTime();
+		
+		System.out.println("@@@@");
+		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
+		System.out.println("@@@@");
+	}
+	
 	/* GENERAL TEST INFORMATION */
-//	private final Point3D TEST_DIMS = new Point3D(50,0,50);
-	private final Point3D TEST_DIMS = new Point3D(82,0,82);
+	private static final Point3D TEST_DIMS = new Point3D(50,0,50);
+//	private static final Point3D TEST_DIMS = new Point3D(82,0,82);
 	
 	/**Dimensions is the actual w/h/l of the area it to survey.
 	 * It is NOT a point in 3D.
 	 */
 	private static Point3D dimensions = null;
-		public static Point3D getDims() {return dimensions;}
+		public static Point3D getDims() { 
+			if(dimensions == null) 
+				return TEST_DIMS;
+			else
+				return dimensions;
+		}
 		private void setDims(Point3D newDims, World world, int x, int y, int z) {
 			if(newDims.x > 2 && newDims.z > 2) {				
 				if(newDims.y < 2) {
@@ -83,14 +118,12 @@ public class CoralCommandBlock extends BlockContainer {
     	return mainFolderPath +"\\"+ currTestFolderName + ("".equals(currTestFolderName) && appendable ? "" : "\\");
     }
     
-    private static SimpleDateFormat folderFormat = new SimpleDateFormat ("yyyy-MM-dd_hh,mm'_rn'");
+    private static SimpleDateFormat folderFormat = new SimpleDateFormat ("yyyy-MM-dd_hh,mm'_'");
     private static SimpleDateFormat fileFormat = new SimpleDateFormat ("yyyy-MM-dd_hh,mm'_'");
     
     private static StringBuilder prevSurvey = new StringBuilder();
     private int[] population = new int[CORAL_TYPE.getNumberOfCoral()];
     private int[] cumHealth = new int[CORAL_TYPE.getNumberOfCoral()];
-    
-    private String testPrefix = "";
     
     
 	
@@ -390,8 +423,7 @@ public class CoralCommandBlock extends BlockContainer {
 	
 	private String getNewTestFolderName() {
 		TestConfig t = getCurrentTest();
-		currTestFolderName = testPrefix+folderFormat.format(new Date())
-							   +"_cl"+t.getColors()+"_eq"+t.getGrowthEq()+"_"+getRandFNumber();
+		currTestFolderName = t.getPrefix()+folderFormat.format(new Date())+t.getTestSignature()+"_"+getRandFNumber();
 		return currTestFolderName;
 	}
 	
@@ -457,7 +489,7 @@ public class CoralCommandBlock extends BlockContainer {
 	/** Kills all the coral inside the test area's bounds. **/
 	private void killAll(World world, int x, int y, int z) {
 		if(printMsgs) System.out.println("XXXX killAll");
-		int yPos, q;
+		int yPos;
 		
 		if(dimensions == null) {
 			System.out.println("!!!! Dimensions is null. Could not kill anything. ");
@@ -469,7 +501,6 @@ public class CoralCommandBlock extends BlockContainer {
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
 //					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
 					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
-					q=world.getBlockId(x+xIncr, yPos, z+zIncr);	//!D
 				}
 			}
 		}
@@ -531,6 +562,7 @@ public class CoralCommandBlock extends BlockContainer {
 		if(printMsgs) System.out.println("<<<< written to file! "+filePath+" \\ "+fileName+"."+ext+" "+header);
 	}
 	
+	@SuppressWarnings("unused")
 	private void runBzip(String fileName) {
 //		Runtime.getRuntime().exec("c:\\program files\\test\\test.exe", null, new File("c:\\program files\\test\\"));
 	}
@@ -566,16 +598,5 @@ public class CoralCommandBlock extends BlockContainer {
 		now.setTime(now.getTime()+(totalTime*60*1000));
 		return f.format(now);
 	}
-	
-	private void setupTests() {		/// AREA IS 1 INDEXED
-		
-		
-		
-		//
-		int totalTime = getAllTestsApxRunTime();
-		
-		System.out.println("@@@@");
-		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
-		System.out.println("@@@@");
-	}
+
 }
