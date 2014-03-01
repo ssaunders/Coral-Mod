@@ -23,11 +23,13 @@ public class BlockCoral extends Block {
 		public static int toIndex(int blockId){
 			return blockId - OFFSET;
 		}
-		
-		public static String getCoralName(int id) {
-			if(id-OFFSET > 0 && id-OFFSET < values().length) 
-				return values()[id-OFFSET].name();
-			else 
+		/** Returns the coral name associated with the block id */
+		public static String getCoralName(int blockId) {
+			if(blockId-OFFSET > 0 && blockId-OFFSET < values().length)
+				return values()[blockId-OFFSET].name();
+			else if (blockId >= 0 && blockId < values().length) //based on index
+				return values()[blockId].name();
+			else
 				return null;
 		}
 		
@@ -251,6 +253,10 @@ public class BlockCoral extends Block {
 	// // MINECRAFT FUNCTIONS // //
 	@Override	// One 'turn'. Grow, then split or die
 	public void updateTick(World world, int x, int y, int z, Random random) {
+		TestConfig t = CoralCommandBlock.getCurrentTest();
+		if(t == null) {	//if there is not a test going on, don't bother
+			return;
+		}
 		CoralInfo[] neighbors = new CoralInfo[8];
 		int numNeighbors = getNeighbors(world, x, y, z, neighbors);
 		int brightness = world.getBlockLightValue(x, y, z);
@@ -267,7 +273,7 @@ public class BlockCoral extends Block {
 			}
 		}
 		
-		switch (getCurrentGrowthEq()) {
+		switch (t.getGrowthEq()) {
 			case 0:
 				healthModifier += equation0(neighbors, numNeighbors, brightness);
 				break;
@@ -284,6 +290,7 @@ public class BlockCoral extends Block {
 				System.out.println("!!!! Growth equation "+getCurrentGrowthEq()+" does not exist.");
 				break;
 		}
+		
 		supportsNumOfEq = 4;
 		
 		grow(healthModifier, x, y, z);

@@ -27,7 +27,6 @@ public class CoralCommandBlock extends BlockContainer {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 	
-	
 	/* GENERAL TEST INFORMATION */
 //	private final Point3D TEST_DIMS = new Point3D(50,0,50);
 	private final Point3D TEST_DIMS = new Point3D(82,0,82);
@@ -35,8 +34,8 @@ public class CoralCommandBlock extends BlockContainer {
 	/**Dimensions is the actual w/h/l of the area it to survey.
 	 * It is NOT a point in 3D.
 	 */
-	private Point3D dimensions = null;
-		public Point3D getDims() {return dimensions;}
+	private static Point3D dimensions = null;
+		public static Point3D getDims() {return dimensions;}
 		private void setDims(Point3D newDims, World world, int x, int y, int z) {
 			if(newDims.x > 2 && newDims.z > 2) {				
 				if(newDims.y < 2) {
@@ -64,7 +63,7 @@ public class CoralCommandBlock extends BlockContainer {
 		public Point3D getRelativeDimensions() {return relativeDimensions;}
 	private Point3D relativeDimensions = new Point3D(0,0,0);
 	
-	private boolean active = false;	//this needs to save the state of the block
+	private static boolean active = false;	//this needs to save the state of the block
 		public boolean isStopped() { return active; }
 		
 	/** The time of the very first run in MS. */
@@ -102,25 +101,15 @@ public class CoralCommandBlock extends BlockContainer {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
-	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
+	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+//	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);
 		
 		//TODO
-		//survey creates file, writes to file, bzips
 		//Write script to interrogate file structure for file sizes 
 
-		int testEq = -1;
-		
-//		fastTest(); /*
-		
-		if(testEq >-1) {
-			testPrefix = "test_";
-			useEquationTestingTests(1);
-		} else {
-			addTests();
-		}
+		setupTests();
 		//*/
 		
 	}
@@ -140,7 +129,7 @@ public class CoralCommandBlock extends BlockContainer {
 				active = true;
 				player.addChatMessage("Starting execution of tests");
 				if(startNewTest(0, world, x, y, z)){
-					firstRun = getCurrentTest().startTime;
+					firstRun = getCurrentTest().getStartTime();
 				} else {
 					player.addChatMessage("Unable to execute tests. Stopping.");
 					active = false;
@@ -156,7 +145,7 @@ public class CoralCommandBlock extends BlockContainer {
 				resetEnvironment(world, x, y, z);
 			} else {
 				player.addChatMessage(
-					"Running test "+getTestNumber()+". Time remaining: "+getCurrentTest().getTimeRemaining()
+					"Running test "+getCurrentTestNumber()+". Time remaining: "+getCurrentTest().getTimeRemaining()
 					+".\n Executed "+(getRunNumber()-1)+" tests. Elapsed time: "+getTotalTimeElapsed()
 					+"\nTo stop all tests, place a torch on top of the block.");
 			}
@@ -307,22 +296,22 @@ public class CoralCommandBlock extends BlockContainer {
 	
 	// VARIABLES, Getters, and setters
 	/** The actual tests that to be run **/
-	private ArrayList<TestConfig> tests = new ArrayList<TestConfig>(); 
-    private TestConfig getCurrentTest() {
-    	if(testNumber < getTotalNumTests()) {
+	private static ArrayList<TestConfig> tests = new ArrayList<TestConfig>(); 
+    public static TestConfig getCurrentTest() {
+    	if(testNumber < getTotalNumTests() && active) {
     		return tests.get(testNumber);
     	} else {
     		return null;
     	}
     }
-    private int getTotalNumTests() {
+    public static int getTotalNumTests() {
     	return tests.size();
     }
     
 	/** The test at position # **/
-	private int testNumber=0;
+	private static int testNumber=0;
 	/** Gets the number of test that is being run. **Different than than the run number** **/
-	public int getTestNumber() {
+	public static int getCurrentTestNumber() {
 		return testNumber;
 	}
 	
@@ -400,17 +389,19 @@ public class CoralCommandBlock extends BlockContainer {
 	}
 	
 	private String getNewTestFolderName() {
-		currTestFolderName = testPrefix+folderFormat.format(new Date())+"_"+getRandFNumber();
+		TestConfig t = getCurrentTest();
+		currTestFolderName = testPrefix+folderFormat.format(new Date())
+							   +"_cl"+t.getColors()+"_eq"+t.getGrowthEq()+"_"+getRandFNumber();
 		return currTestFolderName;
 	}
 	
-	private int getRandFNumber() {
+	public static int getRandFNumber() {
 		return ((int)(Math.random()*99999) % 9000) + 1000;
 	}
 	
 	/** Run through the current test and record the block ids. Also records health and population in arrays. **/
 	private void survey(World world, int x, int y, int z) {
-		if(printMsgs) System.out.println("~~~~ surveyed!");
+		if(printMsgs) System.out.println("~~~~ surveyed! "+lastSurvey);
 		StringBuilder currTest = new StringBuilder();
 		int tempHealth, idx;
 //		int high=-1, low=101, medn=-1, mode=-1;
@@ -454,8 +445,8 @@ public class CoralCommandBlock extends BlockContainer {
 		//TODO figure out if I can bzip from java
 //		runBzip("");
 		
-		if(!"".equals(prevSurvey)) {			
-			writeToFile(getCurrentPath(true)+"Concatenated Tests\\", getSurveyFileName(getSurveyNum()), "", prevSurvey.append(currTest).toString());
+		if(surveyNum > 0) {
+			writeToFile(getCurrentPath(true)+"Concatenated Tests\\", getConcatFileName(getSurveyNum()), "", prevSurvey.append(currTest).toString());
 			//figure out if I can bzip from java
 			
 			prevSurvey = currTest;
@@ -494,7 +485,10 @@ public class CoralCommandBlock extends BlockContainer {
 		name.append( fileFormat.format( new Date(System.currentTimeMillis()) ) );
 		name.append(getRunNumber()+"_");
 		name.append(uniqueId);
-		return name.toString()+".txt";
+		return name.toString();
+	}
+	public String getConcatFileName(int uniqueId) {
+		return getSurveyFileName(uniqueId-1).concat("~"+(uniqueId)+"_c");
 	}
 	
 	//? time between surveys, testing facility, spread (is it even interesting?)
@@ -517,11 +511,11 @@ public class CoralCommandBlock extends BlockContainer {
 	 */
 	
 	/** Writes the given String to a txt file using the given name. **/
-	private void writeToFile(String filePath, String fileName, String header, String data) {
+	public static void writeToFile(String filePath, String fileName, String header, String data) {
 		writeToFile(filePath, fileName, header, data, "txt");
 	}
 	/** Writes the given String to a file using the given name and extension. **/
-	private void writeToFile(String filePath, String fileName, String header, String data, String ext) {
+	public static void writeToFile(String filePath, String fileName, String header, String data, String ext) {
 		File newFile = new File(filePath+fileName+"."+ext);
 		try {
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
@@ -550,353 +544,38 @@ public class CoralCommandBlock extends BlockContainer {
 		return (Math.round(time/1000./60.*100.)/100.);
 	}
 	
-	/*** CLASS: TESTCONFIG **************************************************************************/
-	/***/
-	private class TestConfig {
-		ArrayList<SeedConfig> seeds =  new ArrayList<SeedConfig>();
-		private int getCoralTypes() {
-			if(numTypes < 0) {
-				numTypes = 0;
-				boolean[] typeCounter =  new boolean[CORAL_TYPE.getNumberOfCoral()];
-				int siz = seeds.size();
-				for(int i = 0; i < siz; ++i) {
-					typeCounter[seeds.get(i).type.ordinal()] = true;
-				}
-				for(int i = 0; i < typeCounter.length; ++i) {
-					if(typeCounter[i] == true)
-						numTypes++;
-				}
-			}
-			return numTypes;
+	/** Returns time in minutes */
+	public int getAllTestsApxRunTime() {
+		return getTestsApxRunTime(0);
+	}	
+	/** Returns time in minutes */
+	public int getTestsApxRunTime(int start) {
+		if(start < 0) start = 0;
+		int totalTimeInMin = 0;
+		for(int i = tests.size()-1; i >= start; --i) {
+			totalTimeInMin += tests.get(i).getDuration();
 		}
-
-		/**Equation to use for this test */
-		int equationNum = -1;
-		int numTypes = -1;
-		int duration; //in milliseconds
-		String details;
-		long startTime;
-		public int errorCount=0;
-		StringBuilder errors = null;
-	    private StringBuilder csv;
-	    public String prefix = "";
-
-		/** Returns if the elapsed time is longer than the duration*/
-		public boolean hasTimeElapsed() {
-			return (System.currentTimeMillis() - startTime) >= duration;
-		}
-		
-		/** Returns the time since the test started to two decimals.*/
-		public double getTimeElapsed() {
-			return (Math.round( (System.currentTimeMillis() - startTime)/1000./60.*100.)/100.);
-		}
-		
-		/** Returns the remaining time for the test to two decimals.*/
-		public double getTimeRemaining() {
-			return (Math.round( (duration  - (System.currentTimeMillis() - startTime))/1000./60.*100.))/100.;
-		}
-		
-		/* CONSTRUCTOR */
-		/** Length is in minutes. Notes will be added to a separate text file. **/
-		public TestConfig(int length, int eq, String notes) {
-			equationNum = (eq > 0 ? eq : 0);
-			duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
-			details = notes;
-		}
-		public TestConfig(int length, int eq, String notes, String pfx) {
-			equationNum = (eq > 0 ? eq : 0);
-			duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
-			details = notes;
-			prefix = pfx;
-		}
-		
-		/** Adds a coral 'seed' to the config. A new coral of that 
-		 *  type will be created at the first available y value at 
-		 *  the specified x,z coordinates. **/
-		public void addSeed(int x, int z, CORAL_TYPE t) {
-			SeedConfig q = new SeedConfig(x,z,t);
-			
-			//? Validation?
-			
-			seeds.add(q);
-		}
-		
-		/**Seeds world inside the test boundaries using the seed configs given to it. */
-		private boolean beginTest(World world, int x, int y, int z) {
-			boolean success = true;
-			int size = seeds.size();
-			SeedConfig coralSeed;
-			int relX, relZ, seedY, numCoralPlaced=0;
-			StringBuilder goodKeys = new StringBuilder();
-			
-			startTime = System.currentTimeMillis();
-			csv = new StringBuilder(new SimpleDateFormat("hh:mm").format(new Date(startTime))+
-					",First is population; second is cumHealth\nTime,"+CORAL_TYPE.toCsv()+", ,"+CORAL_TYPE.toCsv()+"\n");
-			for(int i = 0; i < size; ++i) {
-				coralSeed = seeds.get(i);
-				if(coralSeed.x <= dimensions.x && coralSeed.z <= dimensions.z
-					&& coralSeed.x > 0 && coralSeed.z > 0){ 
-					relX = coralSeed.x + x;
-					relZ = coralSeed.z + z;
-					seedY= world.getTopSolidOrLiquidBlock(relX, relZ);
-					if(Coral.coralBlock.addCoral(world, new Point3D(relX,seedY,relZ), coralSeed.blockId)){						
-						++numCoralPlaced;
-						goodKeys.append(i+" ");
-					}
-				} else {
-					String error = "^ Seed #"+i+" ("+coralSeed.x+","+coralSeed.z+") is out of range ("+dimensions.x+","+dimensions.z+")";
-					System.out.println(error);
-					getCurrentTest().addError(error);
-				}
-			}
-			if(numCoralPlaced == 0) {
-				String error = "^ No coral placed. Skipping test. Test "+testNumber;
-				System.out.println(error);
-				getCurrentTest().addError(error);
-				success = false;
-			} else if(numCoralPlaced < size) {
-				String error = "^ Fewer coral placed than planned "+numCoralPlaced+" of "+size+". "+goodKeys;
-				System.out.println(error);
-				getCurrentTest().addError(error);
-				success = true;	//with errors, but still true
-			}
-			BlockCoral.setGrowthEq(equationNum);
-			return success;
-		}
-		
-		public void endTest() {
-			if(startTime != 0) {				
-				writeToFile(getCurrentPath(true), "_Description", "", this.toString());
-				writeToFile(getCurrentPath(true), "_Stats", "", this.csv.toString(), "csv");
-				if(errorCount > 0) {
-					writeToFile(getCurrentPath(true), "_Errors", "Errors:\n", errors.toString());
-				}
-				if(getTimeRemaining() > 1) { //if time remaining > 1 min
-					String data = getTimeElapsed()+"min of "+timeToMin(duration)+"min; "
-							+getTimeRemaining()+"min remaining";
-					writeToFile(getCurrentPath(true), "_UNFINISHED", "", data);
-				}
-			}
-		}
-		
-		public void abort() {
-			writeToFile(getCurrentPath(true), "_Aborted", "", "");
-			if(errorCount > 0) {
-				writeToFile(getCurrentPath(true), "_Errors", "Errors:\n", errors.toString());
-			}
-		}
-
-		private void addError(String string) {
-			if(errors != null) {
-				errors.append("\n"+string);
-			}
-			else {
-				errors = new StringBuilder(string);
-			}
-			errorCount++;
-		}
-		
-		private void appendToCsv(int[] pop, int[] cumHealth) {
-			StringBuffer line = new StringBuffer(
-					new SimpleDateFormat("hh:mm").format( new Date(System.currentTimeMillis()) ) );
-			line.append(',');
-			String pStr = ArrayUtils.toString(pop);
-			line.append(pStr.substring(1, pStr.length()-1));
-			line.append(", ,");
-			String chStr = ArrayUtils.toString(cumHealth);
-			line.append(chStr.substring(1, chStr.length()-1));
-			line.append(",*\n");
-			csv.append(line);
-		}
-
-		public String toString() {
-			return details
-					+"\nFile names are yyyy-mm-dd_hh,mm_(run number)_(survey number)"
-				    +"\nTypes of Coral:\t"+getCoralTypes()
-				    +"\nDuration:\t\t"+getTimeElapsed()+" min \n"
-		    		+"\nSeeds ("+seeds.size()+"):\n"
-				    +seeds.toString();
-		}
-
-		private class SeedConfig {
-			public int x;
-			public int z;
-			public CORAL_TYPE type;
-			public int blockId;
-			
-			public SeedConfig(int xCoor, int zCoor, CORAL_TYPE t) {
-				x = xCoor;
-				z = zCoor;
-				type = t;
-				blockId = CORAL_TYPE.getBlockId(type);
-			}
-			
-			public String toString() {
-				return type.name()+" ("+blockId+") "+String.format("(%3d, y, %3d)", x, z);
-			}
-		}
+		return (int)timeToMin((long)totalTimeInMin);
 	}
-	
-	public String getFinishTime() {		
+	/** Returns the am/pm time that the tests will finish */
+	public String getFinishTime() {
 		int totalTime = getTestsApxRunTime(testNumber);
 		Date now = new Date(System.currentTimeMillis());
 		SimpleDateFormat f = new SimpleDateFormat("h:mm a");
 		
 		now.setTime(now.getTime()+(totalTime*60*1000));
-		return f.format(now);	
+		return f.format(now);
 	}
-	private void outPutTestInfo() {
-		int totalTime = getTestsApxRunTime();
-		Date now = new Date(System.currentTimeMillis());
-		now.setTime(now.getTime()+(totalTime*60*1000));
-		SimpleDateFormat f = new SimpleDateFormat("h:m a");
+	
+	private void setupTests() {		/// AREA IS 1 INDEXED
+		
+		
+		
+		//
+		int totalTime = getAllTestsApxRunTime();
+		
 		System.out.println("@@@@");
-		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+f.format(now) );
+		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
 		System.out.println("@@@@");
-
-	}
-	
-	private void useEquationTestingTests(int eq) {
-		Point3D dims = TEST_DIMS;
-		int halfX = dims.x/2;
-		int halfZ = dims.z/2;
-		TestConfig t;
-		
-		t = new TestConfig(4, eq, "Testing equation "+eq+" for GREEN");
-		t.addSeed(halfX, halfZ-3, CORAL_TYPE.GREEN);
-		t.addSeed(halfX, halfZ-2, CORAL_TYPE.GREEN);
-		t.addSeed(halfX, halfZ-1, CORAL_TYPE.GREEN);
-		t.addSeed(halfX, halfZ,   CORAL_TYPE.GREEN);
-		t.addSeed(halfX, halfZ+1, CORAL_TYPE.GREEN);
-		t.addSeed(halfX, halfZ+2, CORAL_TYPE.GREEN);
-		t.addSeed(halfX, halfZ+3, CORAL_TYPE.GREEN);
-		tests.add(t);
-		
-		outPutTestInfo();
-	}
-	
-	/** Use this function to debug tests */
-	private void fastTest() {
-		int spacer = 10;
-		CORAL_TYPE type = CORAL_TYPE.GREEN;
-		TestConfig t = new TestConfig(2, 0, "scattered test for "+ type);
-		
-		Point3D dims = TEST_DIMS; 
-		int halfX = dims.x/2;
-		int halfZ = dims.z/2;
-			t = new TestConfig(30, 1, "4 group test for "+type+" using threshold of "+(1+3) );
-			t.addSeed(halfX,   halfZ,   type);
-			t.addSeed(halfX,   halfZ+1, type);
-			t.addSeed(halfX+1, halfZ,   type);
-			t.addSeed(halfX+1, halfZ+1, type);
-			tests.add(t);
-		
-		outPutTestInfo();
-	}
-
-	private void addTests() {		/// AREA IS 1 INDEXED
-		/** Other Test ideas
-		 * 	 Fill it full, then see how they die
-		 * 
-		 */
-		
-		Point3D dims = TEST_DIMS;
-		//TEST #
-//		TestConfig number = new TestConfig(5, 0, "group test red");
-//		number.addSeed(11,11, CORAL_TYPE.RED);
-//		tests.add(number);
-		
-		//Variables used
-		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
-		int halfX, halfZ, spacer, testNum;
-		TestConfig t;
-		
-		for(testNum = 1; testNum <= BlockCoral.numEqs; ++testNum) {	
-			//TEST x3
-			//Tests how quickly it spreads from a 4x4 clump
-			halfX = dims.x/2;
-			halfZ = dims.z/2;
-			for(int i = 0; i< types.length; ++i) {			
-				t = new TestConfig(30, testNum, "4 group test for "+types[i].name()+" using threshold of "+(testNum+3) );
-				t.addSeed(halfX,   halfZ,   types[i]);
-				t.addSeed(halfX,   halfZ+1, types[i]);
-				t.addSeed(halfX+1, halfZ,   types[i]);
-				t.addSeed(halfX+1, halfZ+1, types[i]);
-				tests.add(t);
-			}
-			
-			//TEST x3
-			//Tests how quickly it spreads in one direction
-			halfX = dims.x/2;
-			halfZ = dims.z/2;
-			for(int i = 0; i< types.length; ++i) {
-				t = new TestConfig(50, testNum, "Single direction spread test for "+types[i].name()+" using threshold of "+(testNum+3) );
-				t.addSeed(1, 1, types[i]);
-				tests.add(t);
-			}
-			
-			//Test x3
-			//Tests how evenly spaced coral does
-			spacer = 10;
-			for(int i = 0; i< types.length; ++i) {			
-				t = new TestConfig(20, testNum, "scattered test for "+types[i].name());
-				
-				//Hopefully, creates a grid of coral
-				for(int stepX=1; stepX < 5; ++stepX) {				
-					for(int stepZ=1; stepZ < 5; ++stepZ) {				
-						t.addSeed(stepX*spacer, stepZ*spacer, types[i]);
-					}
-				}
-				tests.add(t);
-			}
-		}
-
-		outPutTestInfo();
-	}
-	public int getTestsApxRunTime() {
-		int totalTimeInMin = 0;
-		for(int i = tests.size()-1; i >= 0; --i) {
-			totalTimeInMin += tests.get(i).duration;
-		}
-		return (int)timeToMin((long)totalTimeInMin);
-	}
-	public int getTestsApxRunTime(int start) {
-		if(start < 0) start = 0;
-		int totalTimeInMin = 0;
-		for(int i = tests.size()-1; i >= start; --i) {
-			totalTimeInMin += tests.get(i).duration;
-		}
-		return (int)timeToMin((long)totalTimeInMin);
-	}
-	
-	private void oldTests() {
-		//TEST 1
-		int x = 1, z = 1;
-		TestConfig one = new TestConfig(5, 0, "Just a test");
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		one.addSeed(x++, z++, CORAL_TYPE.BLUE);
-		tests.add(one);
-		x = 1;
-		z = 1;
-		one = new TestConfig(5, 0, "Just a test W/ RED");
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		one.addSeed(x++, z++, CORAL_TYPE.RED);
-		tests.add(one);
-		
-		
 	}
 }
