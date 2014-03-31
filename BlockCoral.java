@@ -1,5 +1,6 @@
 package coral;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -8,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
+@SuppressWarnings("unused")
 public class BlockCoral extends Block {
 	private boolean printMsgs = CoralCommandBlock.showMessages();
 	// // General Functions/Variables // // 
@@ -67,12 +69,12 @@ public class BlockCoral extends Block {
 	private int   maxHealth;		 //! (22-100)
 	    private static HashMap<Point3D, Integer> healthMeter; //the actual health of the coral
 	private int   startingHealth;	 //! (22-100) Beginning health of new coral 
-	private int   splitPoint; 	 	 //! (22-100) Percentage at which coral divides (eg. creates new block).
+	private int   splitPoint; 	 	 //! (22-100) Value at which coral divides (eg. creates new block).
 	private int   expansionCost;	 //! (5-15) Cost of reproducing
 	private int   livingCost;	 	 //! (1-5) How many resources a coral uses to stay alive. 
 	private int   growthFactor; 	 //! (1-5) How quickly a coral grows 
 	private int   photoFactor;	 	 //? (1-4) How well the coral grows at full light level. 
-	private int[] soilPreference; 	 //? (1-6) Some soils are more nutritious than others. This contains how much benefit a type of soil gives the coral. 
+//	private int[] soilPreference; 	 //? (1-6) Some soils are more nutritious than others. This contains how much benefit a type of soil gives the coral. 
 //	private static int[] preferenceList; //x (1-3) How much a coral likes/dislikes other types. It may dislike (-) one kind more than another, but it always likes (+) its own type
 	
 	//Total possible states for all variables: 
@@ -209,7 +211,8 @@ public class BlockCoral extends Block {
 	}
 	
 	// // CONSTRUCTOR // //
-	public BlockCoral(int id,  CORAL_TYPE type, int maxHealth, int startHealth, int splitPoint, int expansionCost, int growthFactor, int livingCost, int photoFactor) {
+	public BlockCoral(int id,  CORAL_TYPE type, int maxHealth, int startHealth, int splitPoint, 
+			int expansionCost, int growthFactor, int livingCost, int photoFactor) {
 		super(id, Material.water);
 		setHardness(0.5F);
 		setStepSound(Block.soundStoneFootstep);
@@ -243,6 +246,8 @@ public class BlockCoral extends Block {
 		if(healthMeter == null) {			
 			healthMeter = new HashMap<Point3D, Integer>(50 * 50, .9f);
 		}
+		
+		showBestAndWorst();
 	}
 
 	private int supportsNumOfEq;
@@ -486,6 +491,48 @@ public class BlockCoral extends Block {
 	}
 	
 	// // GROWTH EQUATIONS // //
+	public void showBestAndWorst(){
+		int bestGrowth = 5,
+			worstGrowth= 1,
+			bestLight  = 4,
+			worstLight  = 1,
+			threshold = 4,
+			bestNumNbrs = threshold-1,
+			worstNumNbrs= 8,
+			bestLivCost = 1,
+			worstLivCost= 5;
+		CoralInfo w = new CoralInfo();
+		w.type = CORAL_TYPE.RED;
+		CoralInfo[] bestNeighbors = new CoralInfo[8],
+			worstNeighbors= {w,w,w,w,w,w,w,w};
+			
+		CoralInfo b;
+		for(int i=7; i>=0; --i) {
+			b = new CoralInfo();
+			b.type = CORAL_TYPE.RANDOM;
+			bestNeighbors[i] = b;
+		}
+		photoFactor = worstLight;
+		int worstEQ0 = equation0(worstNeighbors, worstNumNbrs, 0) - worstLivCost;
+		int worstEQ1 = equation1(worstNeighbors, worstNumNbrs, threshold, 0) - worstLivCost;
+		int worstEQ2 = equation1(worstNeighbors, worstNumNbrs, threshold+1, 0) - worstLivCost;
+		int worstEQ3 = equation1(worstNeighbors, worstNumNbrs, threshold+2, 0) - worstLivCost;
+		
+		photoFactor = bestLight;
+		int bestEQ0 = equation0(bestNeighbors, 8, 15) - bestLivCost;
+		int bestEQ1 = equation1(bestNeighbors, threshold-1, threshold, 15) - bestLivCost;
+		int bestEQ2 = equation1(bestNeighbors, threshold, threshold+1, 15) - bestLivCost;
+		int bestEQ3 = equation1(bestNeighbors, threshold+1, threshold+2, 15) - bestLivCost;
+		
+		System.out.println(
+			"\n\tWorst\tBest\n"+
+			"Eq0   "+worstEQ0+"\t "+bestEQ0+"\n"+
+			"Eq1   "+worstEQ1+"\t "+bestEQ1+"\n"+
+			"Eq2   "+worstEQ2+"\t "+bestEQ2+"\n"+
+			"Eq3   "+worstEQ3+"\t "+bestEQ3+"\n\n"
+		);
+	}
+	
 	public static int numEqs = 4;	//MAKE SURE TO UPDATE THIS NUMBER
 	
 	/** Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) NO DEATH RULE*/
@@ -528,7 +575,7 @@ public class BlockCoral extends Block {
 			}
 		}
 		
-		if(friends + enemies > threshold) {
+		if(friends + enemies > threshold) {	//make this a var? crowdingFactor
 			ngbrVal = -2;
 		} else {
 			ngbrVal = (-enemies + friends);

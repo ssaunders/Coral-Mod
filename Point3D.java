@@ -5,6 +5,7 @@
 package coral;
 import java.awt.Point;
 
+@SuppressWarnings("serial")
 public class Point3D extends Point
 {
     public int z=0;  // The z coordinate

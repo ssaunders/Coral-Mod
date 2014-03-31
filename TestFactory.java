@@ -8,7 +8,7 @@ public class TestFactory {
 		Point3D dims = CoralCommandBlock.getDims();
 		int halfX = dims.x/2;
 		int halfZ = dims.z/2;
-		TestConfig t = new TestConfig("LIN", length, eq, "Testing equation "+eq+" for GREEN");
+		TestConfig t = new TestConfig("LIN", length, eq, "Testing equation "+eq+" for"+type.name());
 		
 		t.addSeed(halfX, halfZ-3, type);
 		t.addSeed(halfX, halfZ-2, type);
@@ -29,6 +29,22 @@ public class TestFactory {
 		for(int stepX=1; stepX < 5; ++stepX) {
 			for(int stepZ=1; stepZ < 5; ++stepZ) {
 				t.addSeed(stepX*spacer, stepZ*spacer, type);
+			}
+		}
+		
+		return t;
+	}
+	
+	public static TestConfig getScatteredMCTest(int length, int eq) {
+		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
+		TestConfig t = new TestConfig("CSCA",length, eq, "Scatter color test"); //do we need notes?
+		int kind = 0, ln = types.length;
+
+		int spacer = 10;
+		//creates a grid of coral
+		for(int stepX=1; stepX < 5; ++stepX) {
+			for(int stepZ=1; stepZ < 5; ++stepZ) {
+				t.addSeed(stepX*spacer, stepZ*spacer, types[++kind % ln]);
 			}
 		}
 		

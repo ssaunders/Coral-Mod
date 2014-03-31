@@ -11,6 +11,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import coral.BlockCoral.CORAL_TYPE;
 
 public class TestConfig {
+	public static int getIdNum() {
+		return ((int)(Math.random()*99999) % 9000) + 1000;
+	}
+	
 	ArrayList<SeedConfig> seeds =  new ArrayList<SeedConfig>();
 	
 	private String typeList = "";
@@ -53,6 +57,8 @@ public class TestConfig {
 	
 	private String details;
 	private int errorCount=0;
+	private int uniqueId;
+	public int getUniqueId() { return uniqueId; }
 	
 	private long startTime;
 		public long getStartTime() {
@@ -75,8 +81,7 @@ public class TestConfig {
 
 	private StringBuilder csv;
 		public void appendToCsv(int[] pop, int[] cumHealth) {
-			StringBuffer line = new StringBuffer(
-					new SimpleDateFormat("hh:mm").format( new Date(System.currentTimeMillis()) ) );
+			StringBuffer line = new StringBuffer(""+getTimeElapsed());
 			line.append(',');
 			String pStr = ArrayUtils.toString(pop);
 			line.append(pStr.substring(1, pStr.length()-1));
@@ -91,9 +96,9 @@ public class TestConfig {
     	public void addPrefix(String s) { prefix = s.concat("_"); }
     	public String getPrefix() { return prefix; }
     	
-    private String testIdentifier;
+    private String testSignature;
 	    public String getTestSignature() {
-	    	return "("+testIdentifier+","+getColors()+","+getGrowthEq()+")";
+	    	return "("+testSignature+","+getColors()+","+getGrowthEq()+")";
 	    }
 
 	/** Returns if the elapsed time is longer than the duration*/
@@ -114,17 +119,19 @@ public class TestConfig {
 	/* CONSTRUCTOR */
 	/** Length is in minutes. Notes will be added to a separate text file. **/
 	public TestConfig(String key, int length, int eq, String notes) {
-		testIdentifier = key;
+		testSignature = key;
 		equationNum = (eq > 0 ? eq : 0);
 		duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 		details = notes;
+		uniqueId = getIdNum();
 	}
 	public TestConfig(String key, int length, int eq, String notes, String pfx) {
-		testIdentifier = key;
+		testSignature = key;
 		equationNum = (eq > 0 ? eq : 0);
 		duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 		details = notes;
 		prefix = pfx;
+		uniqueId = getIdNum();
 	}
 	
 	/** Adds a coral 'seed' to the config. A new coral of that 
@@ -150,7 +157,7 @@ public class TestConfig {
 		
 		setStartTime();
 		csv = new StringBuilder(new SimpleDateFormat("hh:mm").format(new Date(getStartTime()))+
-				",First is population; second is cumHealth\nTime,"+CORAL_TYPE.toCsv()+", ,"+CORAL_TYPE.toCsv()+"\n");
+				",Population,,,,,,,,,,Cumulative Health\nTime,"+CORAL_TYPE.toCsv()+", ,"+CORAL_TYPE.toCsv()+"\n");
 		for(int i = 0; i < size; ++i) {
 			coralSeed = seeds.get(i);
 			if(coralSeed.x <= dimensions.x && coralSeed.z <= dimensions.z
@@ -185,11 +192,10 @@ public class TestConfig {
 	public void endTest() {
 		if(getStartTime() != 0) {
 			String path = CoralCommandBlock.getCurrentPath(true);
-			int num = CoralCommandBlock.getRandFNumber();
-			CoralCommandBlock.writeToFile(path, "_Description_"+num, "", this.toString());
-			CoralCommandBlock.writeToFile(path, "_Stats_"+num, "", this.csv.toString(), "csv");
+			CoralCommandBlock.writeToFile(path, "_Description_"+uniqueId, "", this.toString());
+			CoralCommandBlock.writeToFile(path, "_Stats_"+uniqueId, "", this.csv.toString(), "csv");
 			if(errorCount > 0) {
-				CoralCommandBlock.writeToFile(path, "_Errors_"+num, "Errors:\n", errors.toString());
+				CoralCommandBlock.writeToFile(path, "_Errors_"+uniqueId, "Errors:\n", errors.toString());
 			}
 			if(getTimeRemaining() > 1) { //if time remaining > 1 min
 				String data = getTimeElapsed()+"min of "+CoralCommandBlock.timeToMin(duration)+"min; "
@@ -208,10 +214,9 @@ public class TestConfig {
 	}
 
 	public String toString() {
-		return details
-				+"\nFile names are yyyy-mm-dd_hh,mm_(run number)_(survey number)"
-			    +"\nTypes of Coral:\t"+getNumCoralTypes()
-			    +"\nDuration:\t\t"+getTimeElapsed()+" min \n"
+		return  getTestSignature()
+			    +"\nFile names are yyyy-mm-dd_hh,mm_(survey number)_(elapsed time)\n"
+			    +details
 	    		+"\nSeeds ("+seeds.size()+"):\n"
 			    +seeds.toString();
 	}
