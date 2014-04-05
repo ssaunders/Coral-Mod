@@ -3,7 +3,7 @@
 #Bash script to process the data in csv files
 
 
-cd /cygdrive/c/Users/Stephen/Desktop/Coral_Tests;
+cd /cygdrive/c/Users/${USER}/Desktop/Coral_Tests;
 
 #Step 1: Find all csv files
 csvList  = $(find -name "*.csv");

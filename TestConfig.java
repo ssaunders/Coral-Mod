@@ -52,10 +52,15 @@ public class TestConfig {
 	private int equationNum = -1;
 		public int getGrowthEq() { return equationNum; }
 		
+	/**Length of test in MS*/
 	private int duration; //in milliseconds
 		public int getDuration() { return duration; }
 	
 	private String details;
+	private String testFacility="none";
+		public void setFacility(String facility) {
+			testFacility = facility;
+		}
 	private int errorCount=0;
 	private int uniqueId;
 	public int getUniqueId() { return uniqueId; }
@@ -215,7 +220,9 @@ public class TestConfig {
 
 	public String toString() {
 		return  getTestSignature()
-			    +"\nFile names are yyyy-mm-dd_hh,mm_(survey number)_(elapsed time)\n"
+			    +"\nFile names are yyyy-mm-dd_hh,mm_(survey number)_(elapsed time)"
+			    +"\nDuration:\t\t"+getTimeElapsed()+"min"
+			    +"\nFacility:\t\t"+testFacility+"\n"
 			    +details
 	    		+"\nSeeds ("+seeds.size()+"):\n"
 			    +seeds.toString();
@@ -239,4 +246,5 @@ public class TestConfig {
 			return type.name()+" ("+blockId+") "+String.format("(%3d, y, %3d)", x, z);
 		}
 	}
+
 }

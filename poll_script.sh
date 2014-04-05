@@ -24,7 +24,7 @@ do
              usage
              exit 1;;
          d)
-            DIR=$OPTARG;;
+             DIR=$OPTARG;;
          c)
              CHANGE_DIR=0;;
          ?)
