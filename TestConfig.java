@@ -11,7 +11,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import coral.BlockCoral.CORAL_TYPE;
 
 public class TestConfig {
-	public static int getIdNum() {
+	public static int getNewUniqueId() {
 		return ((int)(Math.random()*99999) % 9000) + 1000;
 	}
 	
@@ -54,8 +54,10 @@ public class TestConfig {
 		
 	/**Length of test in MS*/
 	private int duration; //in milliseconds
+		/** Returns the length of the test in MS */
 		public int getDuration() { return duration; }
 	
+	/** A string of custom text. Notes are put here */
 	private String details;
 	private String testFacility="none";
 		public void setFacility(String facility) {
@@ -63,7 +65,8 @@ public class TestConfig {
 		}
 	private int errorCount=0;
 	private int uniqueId;
-	public int getUniqueId() { return uniqueId; }
+		/** Returns the four-digit random number used in the folder name */
+		public int getUniqueId() { return uniqueId; }
 	
 	private long startTime;
 		public long getStartTime() {
@@ -128,7 +131,7 @@ public class TestConfig {
 		equationNum = (eq > 0 ? eq : 0);
 		duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 		details = notes;
-		uniqueId = getIdNum();
+		uniqueId = getNewUniqueId();
 	}
 	public TestConfig(String key, int length, int eq, String notes, String pfx) {
 		testSignature = key;
@@ -136,7 +139,7 @@ public class TestConfig {
 		duration = length < 5 ? 1 * 60 * 1000 : length * 60 * 1000;
 		details = notes;
 		prefix = pfx;
-		uniqueId = getIdNum();
+		uniqueId = getNewUniqueId();
 	}
 	
 	/** Adds a coral 'seed' to the config. A new coral of that 

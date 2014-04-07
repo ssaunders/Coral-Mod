@@ -29,35 +29,37 @@ public class CoralCommandBlock extends BlockContainer {
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
 		int std_length = 45;
 		
-		
+		TestFactory.setDims(dimensions);
 		//do so for eq 1,2,3
-//		for(int eq = 3; eq > 0; --eq) {
-//			for(int i = types.length-1; i >= 0; --i) {
-//				for(int rpt = 1; rpt > 0; --rpt) {
-//					tests.add(TestFactory.get4GroupTest(std_length, eq, types[i]));
-//				}
-//			}
-//			
-////				for(int i = types.length-2; i >= 0; --i) {
-////					for(int rpt = 10; rpt > 0; --rpt) {					
-////						tests.add(TestFactory.getOneDirTest(40, eq, types[i]));
-////					}
-////				}
-////				
-////				for(int i = types.length-2; i >= 0; --i) {
-////					for(int rpt = 10; rpt > 0; --rpt) {					
-////						tests.add(TestFactory.getScatteredTest(20, eq, types[i]));
-////					}
-////				}
-//				
-//				for(int i = types.length-1; i >= 0; --i) {
-//					for(int rpt = 1; rpt > 0; --rpt) {					
-//						tests.add(TestFactory.getFullTest(std_length, eq, types[i]));
+		for(int eq = 3; eq > 0; --eq) {
+			for(int i = types.length-1; i >= 0; --i) {
+				for(int rpt = 1; rpt > 0; --rpt) {
+					tests.add(TestFactory.get4GroupTest(std_length, eq, types[i]));
+				}
+			}
+			
+//				for(int i = types.length-2; i >= 0; --i) {
+//					for(int rpt = 10; rpt > 0; --rpt) {					
+//						tests.add(TestFactory.getOneDirTest(40, eq, types[i]));
 //					}
 //				}
-//		}
+				
+				for(int i = types.length-2; i >= 0; --i) {
+					for(int rpt = 10; rpt > 0; --rpt) {					
+						tests.add(TestFactory.getScatteredTest(20, eq, types[i]));
+					}
+				}
+				
+				for(int i = types.length-1; i >= 0; --i) {
+					for(int rpt = 1; rpt > 0; --rpt) {					
+						tests.add(TestFactory.getFullTest(std_length, eq, types[i]));
+					}
+				}
+		}
 		
-		tests.add(TestFactory.getScatteredMCTest(5, 2));
+		tests.add(TestFactory.getScatteredMCTest(std_length*2, 3));
+		tests.add(TestFactory.getScatteredMCTest(std_length*2, 2));
+		tests.add(TestFactory.getScatteredMCTest(std_length*2, 1));
 
 		int totalTime = getAllTestsApxRunTime();
 		
@@ -340,6 +342,7 @@ public class CoralCommandBlock extends BlockContainer {
 		}
 	}
 	
+	/** Kills everything, sets dimensions, and zeros out control variables */
 	private void resetEnvironment(World world, int x, int y, int z) {
 		if (dimensions == null) {
 			setDims(TEST_DIMS, world, x, y, z);
@@ -358,7 +361,8 @@ public class CoralCommandBlock extends BlockContainer {
 	
 	// VARIABLES, Getters, and setters
 	/** The actual tests that to be run **/
-	private static ArrayList<TestConfig> tests = new ArrayList<TestConfig>(); 
+	private static ArrayList<TestConfig> tests = new ArrayList<TestConfig>();
+	/** Returns the test config of the current running test. Returns null if no tests are running */
     public static TestConfig getCurrentTest() {
     	if(testNumber < getTotalNumTests() && active) {
     		return tests.get(testNumber);
@@ -447,7 +451,7 @@ public class CoralCommandBlock extends BlockContainer {
 		
 		new File(folderName).mkdirs();
 		new File(folderName+"\\Concatenated_Tests").mkdirs();
-		if(printMsgs) System.out.println("~~~~ Made folders");
+		if(printMsgs) System.out.println("~~~~ Made folders for "+getCurrentTest().getTestSignature()+"_"+getCurrentTest().getUniqueId());
 	}
 	
 	private String getNewTestFolderName() {
