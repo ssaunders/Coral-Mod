@@ -467,7 +467,7 @@ public class CoralCommandBlock extends BlockContainer {
 			getCurrentTest().endTest();
 		}
 		if(printMsgs) System.out.println("==== Ending test "+testNumber);
-		resetEnvironment(world, x, y, z);
+//		resetEnvironment(world, x, y, z);
 	}
 	
 	private void setupTestFolder() {
