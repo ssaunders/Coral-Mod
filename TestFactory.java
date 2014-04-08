@@ -12,14 +12,14 @@ public class TestFactory {
 	}
 	private static Point3D dims;
 	public static void setDims(int x, int y, int z) {
-		if(x > 0 && z > 0 && y > 1) {
+		if(x > 0 && z > 0) {
 			dims = new Point3D(x,y,z);
 		} else {
 			System.err.println("!!!! Attempted to set TestFactory dimensions to 0");
 		}
 	}
 	public static void setDims(Point3D d) {
-		if(d.x > 0 && d.z> 0 && d.y > 1) {
+		if(d.x > 0 && d.z> 0) {
 			dims = d;
 		} else {
 			System.err.println("!!!! Attempted to set TestFactory dimensions to 0");

@@ -29,7 +29,7 @@ public class CoralCommandBlock extends BlockContainer {
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
 		int std_length = 45;
 		
-		TestFactory.setDims(dimensions);
+		TestFactory.setDims(getDims());
 		//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
 			for(int i = types.length-1; i >= 0; --i) {
@@ -40,13 +40,13 @@ public class CoralCommandBlock extends BlockContainer {
 			
 //				for(int i = types.length-2; i >= 0; --i) {
 //					for(int rpt = 10; rpt > 0; --rpt) {					
-//						tests.add(TestFactory.getOneDirTest(40, eq, types[i]));
+//						tests.add(TestFactory.getOneDirTest(std_length, eq, types[i]));
 //					}
 //				}
 				
 				for(int i = types.length-2; i >= 0; --i) {
 					for(int rpt = 10; rpt > 0; --rpt) {					
-						tests.add(TestFactory.getScatteredTest(20, eq, types[i]));
+						tests.add(TestFactory.getScatteredTest(std_length, eq, types[i])); 
 					}
 				}
 				
@@ -78,21 +78,25 @@ public class CoralCommandBlock extends BlockContainer {
 			name = "Ideal";
 		} else if(belowBlock == blockIron.blockID) {
 			name = "Scatter Shaded";
-		} else if(belowBlock == blockEmerald.blockID) {
-			name = "not defined";
-		} else if(belowBlock == blockLapis.blockID) {
-			name = "not defined";
-		} else if(belowBlock == blockRedstone.blockID) {
-			name = "not defined";
-		} else if(belowBlock == blockSnow.blockID) {
-			name = "not defined";
+		} else {
+			name="not defined";
 		}
+//		} else if(belowBlock == blockEmerald.blockID) {
+//			name = "not defined";
+//		} else if(belowBlock == blockLapis.blockID) {
+//			name = "not defined";
+//		} else if(belowBlock == blockRedstone.blockID) {
+//			name = "not defined";
+//		} else if(belowBlock == blockSnow.blockID) {
+//			name = "not defined";
+//		}
 		return "Ideal";
 	}
 	
 	/* GENERAL TEST INFORMATION */
 //	private static final Point3D TEST_DIMS = new Point3D(50,0,50);
 	private static final Point3D TEST_DIMS = new Point3D(82,0,82);
+	private static Point3D blockCoor=null;
 	
 	/**Dimensions is the actual w/h/l of the area it to survey.
 	 * It is NOT a point in 3D.
@@ -206,6 +210,7 @@ public class CoralCommandBlock extends BlockContainer {
 					tcfg.endTest();
 				}
 				resetEnvironment(world, x, y, z);
+				active = false;
 			} else {
 				player.addChatMessage(
 					"Running test "+getCurrentTestNumber()+". Time remaining: "+getCurrentTest().getTimeRemaining()
@@ -256,6 +261,9 @@ public class CoralCommandBlock extends BlockContainer {
             if (world.isBlockIndirectlyGettingPowered(x, y, z))
             {
             	if(active) {
+            		if(!blockCoor.equals(new Point3D(x, y, z))){
+            			messagePlayers(world, "!!!! TWO COMMAND BLOCKS RUNNING !!!!");
+            		}
             		long currTime = System.currentTimeMillis(); 
             		if(currTime - lastSurvey > 12000) {
             			lastSurvey = currTime;
@@ -291,30 +299,43 @@ public class CoralCommandBlock extends BlockContainer {
 	//	        GL11.glVertex3f(mx+0.4f,my,mz-0.4f);
 	//	        GL11.glVertex3f(mx-0.4f,my,mz+0.4f);
 	//	        GL11.glEnd();
-	//	        GL11.glPopMatrix();            	
+	//	        GL11.glPopMatrix();      	
 //            }
         } //remote
 	}
 	
 	@Override
+	public void onBlockAdded(World world, int x, int y, int z) {
+		if(blockCoor == null) {
+			blockCoor = new Point3D(x, y, z);
+		} else {
+			messagePlayers(world, "!!!! Adding another command block");
+		}
+		super.onBlockAdded(world, x, y, z);
+	}
+	
+	@Override
 	public boolean canPlaceBlockAt(World world, int x, int y, int z) { 
-	/*
-	 	if(active) {
-	 		chat to player "Cannot place block. Tests in progress".
+		if(active) {
+	 		messagePlayers(world, "Cannot place block. Tests in progress.");
+	 		System.out.println("Cannot place block. Tests in progress.");
 	 		return false;
-		} else if ( blockCoor != null ) {
-			if ( there is a torch at xyz) {
-				world.
-				resetEnvironment(world, x, y, z);
-				place block; //? do I need to do this?
-				return super.canPlaceBlockAt(world, x, y, z);
+		}
+	 	if ( blockCoor != null ) {
+			if (world.getBlockId(x, y, z) == torchRedstoneIdle.blockID) {
+				if(world.getBlockId(blockCoor.x, blockCoor.y, blockCoor.z) == this.blockID) {
+					world.destroyBlock(blockCoor.x, blockCoor.y, blockCoor.z, false);
+					world.destroyBlock(x,y,z, false);
+					resetEnvironment(world, x, y, z);
+					return super.canPlaceBlockAt(world, x, y, z);
+				} else { System.out.println("!!!! Block Coordinates were not attached to a command block"); }
 			} else {
-				chat to player "A coral command block already exists. To move the block, place on top of a torch."
+				messagePlayers(world, "A coral command block already exists. To move the block, place on top of a torch.");
+				System.out.println("A coral command block already exists. To move the block, place on top of a torch.");
+				return false;
 			}
 		}
-	
-	*/
-		return super.canPlaceBlockAt(world, x, y, z);
+	 	return super.canPlaceBlockAt(world, x, y, z);
 	}
 	
 //	/**If any experiments are running, you must put a torch on to break the block*/
@@ -323,35 +344,36 @@ public class CoralCommandBlock extends BlockContainer {
 		if(active){
 			if(world.getBlockId(x, y+1, z) == torchWood.blockID) {
 				resetEnvironment(world, x, y, z);
+				active = false;
 				getCurrentTest().endTest();
-				//clear current block coor
+				blockCoor=null;
 				return super.removeBlockByPlayer(world, player, x, y, z);
 			} else {				
 				player.addChatMessage(
 					"Executed "+getRunNumber()+" tests. Run time was "+getTotalTimeElapsed()+" min."
 					+"\nTo stop all tests, place a torch on top of the block.");
-				
 				return false;
 			}
 		} else {
 			resetEnvironment(world, x, y, z);
 			TestConfig tcfg = getCurrentTest();
 			if(tcfg != null) tcfg.endTest();
-			//clear current block coor
+			blockCoor=null;
 			return super.removeBlockByPlayer(world, player, x, y, z);
 		}
 	}
 	
 	/** Kills everything, sets dimensions, and zeros out control variables */
 	private void resetEnvironment(World world, int x, int y, int z) {
+		blockCoor=new Point3D(x, y, z);
 		if (dimensions == null) {
 			setDims(TEST_DIMS, world, x, y, z);
 		}
 		killAll(world, x, y, z);
-		active = false;
 		firstRun = 0;
 		lastSurvey = 0;
 		prevSurvey = new StringBuilder();
+		
 		testNumber = 0;
 		surveyNum = 0;
 		runNumber = 0;
@@ -422,6 +444,7 @@ public class CoralCommandBlock extends BlockContainer {
 				if(printMsgs) System.out.println("===> Beggining test "+testNumber+" at "+new Date()+". "+(testNumber+1)+" of "+getTotalNumTests() );
 				System.out.println("Estimated finish time for all tests: "+getFinishTime());
 				setupTestFolder();
+				prevSurvey= new StringBuilder();
 				success = tcfg.beginTest(world, x, y, z);
 				
 				if(!success) 
@@ -444,6 +467,7 @@ public class CoralCommandBlock extends BlockContainer {
 			getCurrentTest().endTest();
 		}
 		if(printMsgs) System.out.println("==== Ending test "+testNumber);
+		resetEnvironment(world, x, y, z);
 	}
 	
 	private void setupTestFolder() {
@@ -598,14 +622,18 @@ public class CoralCommandBlock extends BlockContainer {
 		if(printMsgs) System.out.println("<<<< written to file! "+fileName+"."+ext+" "+header);
 	}
 	
-	@SuppressWarnings("unused")
-	private void runBzip(String fileName) {
-//		Runtime.getRuntime().exec("c:\\program files\\test\\test.exe", null, new File("c:\\program files\\test\\"));
-	}
-
 	@Override
 	public TileEntity createNewTileEntity(World world) {
 		return null;
+	}
+	
+	public void messagePlayers(World world, String msg) {
+		if(active) {
+	 		for (Object p : world.playerEntities)
+		 	{
+	 			((EntityPlayer)p).addChatMessage(msg);
+		 	}
+		}
 	}
 	
 	public static double timeToMin(long time){

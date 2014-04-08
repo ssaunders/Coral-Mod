@@ -52,6 +52,10 @@ public class Point3D extends Point
     	setZ(z);
     }
     
+    public boolean equals(Point3D p) {
+    	return p.x == x && p.y == y && p.z == z;
+    }
+    
     public String toString() { 
     	return "coral.Point3D[x="+x+",y="+y+",z="+z+"]";
     }
