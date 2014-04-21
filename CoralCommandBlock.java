@@ -28,38 +28,48 @@ public class CoralCommandBlock extends BlockContainer {
 	private void setupTests() {		/// AREA IS 1 INDEXED
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
 		int std_length = 45;
+		int std_rpt=10;
 		
 		TestFactory.setDims(getDims());
-		//do so for eq 1,2,3
+///*		
+		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
+		tests.get(0).addPrefix("trash");
+/*	//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
 			for(int i = types.length-1; i >= 0; --i) {
-				for(int rpt = 1; rpt > 0; --rpt) {
+				for(int rpt = 2; rpt > 0; --rpt) {
 					tests.add(TestFactory.get4GroupTest(std_length, eq, types[i]));
 				}
 			}
 			
 //				for(int i = types.length-2; i >= 0; --i) {
-//					for(int rpt = 10; rpt > 0; --rpt) {					
+//					for(int rpt = 2; rpt > 0; --rpt) {					
 //						tests.add(TestFactory.getOneDirTest(std_length, eq, types[i]));
 //					}
 //				}
 				
 				for(int i = types.length-2; i >= 0; --i) {
-					for(int rpt = 10; rpt > 0; --rpt) {					
-						tests.add(TestFactory.getScatteredTest(std_length, eq, types[i])); 
+					for(int rpt = 1; rpt > 0; --rpt) {					
+						tests.add(TestFactory.getScatteredTest(std_length+20, eq, types[i])); 
 					}
 				}
 				
 				for(int i = types.length-1; i >= 0; --i) {
-					for(int rpt = 1; rpt > 0; --rpt) {					
+					for(int rpt = 2; rpt > 0; --rpt) {					
 						tests.add(TestFactory.getFullTest(std_length, eq, types[i]));
 					}
 				}
-		}
+		}	//*/
 		
-		tests.add(TestFactory.getScatteredMCTest(std_length*2, 3));
-		tests.add(TestFactory.getScatteredMCTest(std_length*2, 2));
-		tests.add(TestFactory.getScatteredMCTest(std_length*2, 1));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
 
 		int totalTime = getAllTestsApxRunTime();
 		
@@ -94,9 +104,35 @@ public class CoralCommandBlock extends BlockContainer {
 	}
 	
 	/* GENERAL TEST INFORMATION */
-//	private static final Point3D TEST_DIMS = new Point3D(50,0,50);
-	private static final Point3D TEST_DIMS = new Point3D(82,0,82);
-	private static Point3D blockCoor=null;
+//	private static final Point3D TEST_DIMS = new Point3D(50,0,50);	/*	//50x50		
+	private static final Point3D TEST_DIMS = new Point3D(82,0,82);		//82x82		*/
+	private static ArrayList<Point3D> blockCoor=new ArrayList<Point3D>();
+		private static Point3D getBlockCoor() {
+			if(blockCoor.size() > 0)
+				return blockCoor.get(0);
+			else 
+				return null;
+		}
+		private static void addBlockCoor(int x, int y, int z) {
+			Point3D k = new Point3D(x, y, z);
+			if(!blockCoor.contains(k)){				
+				blockCoor.add(k);
+			}
+			if(blockCoor.size() > 1) {
+				System.out.println("!!!! More than one command block: "+blockCoor);
+			}			
+		}
+		private static void clearBlockCoor(int x, int y, int z) {
+			Point3D k = new Point3D(x,y,z);
+			if(blockCoor.contains(k)){
+				blockCoor.remove(k);
+			} else {
+				System.out.println("!!!! Tried to remove "+k+" but no value is there.");
+			}
+			if(blockCoor.size() > 0) {
+				System.out.println("!!!! An additional command block still exists: "+blockCoor);				
+			}
+		}
 	
 	/**Dimensions is the actual w/h/l of the area it to survey.
 	 * It is NOT a point in 3D.
@@ -186,6 +222,7 @@ public class CoralCommandBlock extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, 
 			EntityPlayer player, int par6, float par7, float par8, float par9) {
+		addBlockCoor(x, y, z);
 		if (dimensions == null) {
 			setDims(TEST_DIMS, world, x, y, z);
 		}
@@ -261,8 +298,13 @@ public class CoralCommandBlock extends BlockContainer {
             if (world.isBlockIndirectlyGettingPowered(x, y, z))
             {
             	if(active) {
-            		if(!blockCoor.equals(new Point3D(x, y, z))){
-            			messagePlayers(world, "!!!! TWO COMMAND BLOCKS RUNNING !!!!");
+            		Point3D bc = getBlockCoor();
+            		if(bc != null) {
+            			if(!bc.equals(new Point3D(x, y, z))){
+            				messagePlayers(world, "!!!! TWO COMMAND BLOCKS RUNNING !!!!");
+            			}
+            		} else {
+            			addBlockCoor(x, y, z);
             		}
             		long currTime = System.currentTimeMillis(); 
             		if(currTime - lastSurvey > 12000) {
@@ -306,11 +348,7 @@ public class CoralCommandBlock extends BlockContainer {
 	
 	@Override
 	public void onBlockAdded(World world, int x, int y, int z) {
-		if(blockCoor == null) {
-			blockCoor = new Point3D(x, y, z);
-		} else {
-			messagePlayers(world, "!!!! Adding another command block");
-		}
+		addBlockCoor(x, y, z);
 		super.onBlockAdded(world, x, y, z);
 	}
 	
@@ -321,10 +359,11 @@ public class CoralCommandBlock extends BlockContainer {
 	 		System.out.println("Cannot place block. Tests in progress.");
 	 		return false;
 		}
-	 	if ( blockCoor != null ) {
+		Point3D blockCoord = getBlockCoor();
+	 	if ( blockCoord != null ) {
 			if (world.getBlockId(x, y, z) == torchRedstoneIdle.blockID) {
-				if(world.getBlockId(blockCoor.x, blockCoor.y, blockCoor.z) == this.blockID) {
-					world.destroyBlock(blockCoor.x, blockCoor.y, blockCoor.z, false);
+				if(world.getBlockId(blockCoord.x, blockCoord.y, blockCoord.z) == this.blockID) {
+					world.destroyBlock(blockCoord.x, blockCoord.y, blockCoord.z, false);
 					world.destroyBlock(x,y,z, false);
 					resetEnvironment(world, x, y, z);
 					return super.canPlaceBlockAt(world, x, y, z);
@@ -346,7 +385,7 @@ public class CoralCommandBlock extends BlockContainer {
 				resetEnvironment(world, x, y, z);
 				active = false;
 				getCurrentTest().endTest();
-				blockCoor=null;
+				clearBlockCoor(x, y, z);
 				return super.removeBlockByPlayer(world, player, x, y, z);
 			} else {				
 				player.addChatMessage(
@@ -358,14 +397,14 @@ public class CoralCommandBlock extends BlockContainer {
 			resetEnvironment(world, x, y, z);
 			TestConfig tcfg = getCurrentTest();
 			if(tcfg != null) tcfg.endTest();
-			blockCoor=null;
+			clearBlockCoor(x, y, z);
 			return super.removeBlockByPlayer(world, player, x, y, z);
 		}
 	}
 	
 	/** Kills everything, sets dimensions, and zeros out control variables */
 	private void resetEnvironment(World world, int x, int y, int z) {
-		blockCoor=new Point3D(x, y, z);
+		clearBlockCoor(x, y, z);
 		if (dimensions == null) {
 			setDims(TEST_DIMS, world, x, y, z);
 		}
@@ -457,7 +496,8 @@ public class CoralCommandBlock extends BlockContainer {
 			}
 		} while(!success && tcfg != null);
 		
-//		killAll(world, x, y, z);
+		//TODO take screenshot!!!!!!!!!!!!!!
+		
 		return success;
 	}
 	
@@ -491,7 +531,7 @@ public class CoralCommandBlock extends BlockContainer {
 		int tempHealth, idx;
 //		int high=-1, low=101, medn=-1, mode=-1;
 		
-		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {			
+		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {
 			for(int zPos = z+1; zPos < z + dimensions.z; ++zPos) {
 				//3-scan
 				for(int yPos = y-1; yPos >= y - dimensions.y; --yPos) {	//TODO test if >= works ok
@@ -528,12 +568,12 @@ public class CoralCommandBlock extends BlockContainer {
 		
 		String num = ""+getCurrentTest().getTimeElapsed();
 		writeToFile(getCurrentPath(true), getSurveyFileName(getSurveyNum()), num, currTest.toString());
-		//TODO figure out if I can bzip from java
-//		runBzip("");
+		
+		if(prevSurvey.length() > 0) System.out.println(getCurrentTest().getUniqueId()+" prev: "+prevSurvey.substring(0,15));
+		System.out.println(getCurrentTest().getUniqueId()+" curr: "+currTest.substring(0,15));
 		
 		if(surveyNum > 1) {
 			writeToFile(getCurrentPath(true)+"Concatenated_Tests\\", getConcatFileName(getSurveyNum()), num, prevSurvey.append(currTest).toString());
-			//figure out if I can bzip from java
 			
 			prevSurvey = currTest;
 		}

@@ -49,9 +49,9 @@ public class TestFactory {
 		
 		int spacer = 10;
 		//creates a grid of coral
-		for(int stepX=1; stepX < dims.x%spacer; ++stepX) 
+		for(int stepX=1; stepX < dims.x/spacer; ++stepX) 
 		{
-			for(int stepZ=1; stepZ < dims.z%spacer; ++stepZ) 
+			for(int stepZ=1; stepZ < dims.z/spacer; ++stepZ) 
 			{
 				t.addSeed(stepX*spacer, stepZ*spacer, type);
 			}
@@ -72,8 +72,8 @@ public class TestFactory {
 		int spacer = 10;
 		int stepZ, stepX,a=0,z=0;
 		//creates a grid of coral
-		for(stepX=1; stepX < dims.x%spacer; ++stepX) {
-			for(stepZ=1; stepZ < dims.z%spacer; ++stepZ) {
+		for(stepX=1; stepX < dims.x/spacer; ++stepX) {
+			for(stepZ=1; stepZ < dims.z/spacer; ++stepZ) {
 //				if(stepX > 1 && types[kind % ln] == CORAL_TYPE.RED && twoRed != 0) {
 //					t.addSeed(a-1, z, CORAL_TYPE.RED);
 //					t.addSeed(a+1, z, CORAL_TYPE.RED);
@@ -103,6 +103,27 @@ public class TestFactory {
 		t.addSeed(halfX,   halfZ+1, type);
 		t.addSeed(halfX+1, halfZ,   type);
 		t.addSeed(halfX+1, halfZ+1, type);
+		
+		return t;
+	}
+	
+	public static TestConfig get2CoralTest(int length, int eq, CORAL_TYPE typeA, CORAL_TYPE typeB) {
+		TestConfig t = new TestConfig("2CT",length, eq, "Two coral test with "+typeA+" and "+typeB+"using threshold of "+(eq+3) );	//!POF
+		t.setFacility(facility);
+		
+		int qtrX = dims.x/4;
+		int qtrZ = dims.z/4;
+		t.addSeed(qtrX,   qtrZ,   typeA);
+		t.addSeed(qtrX,   qtrZ+1, typeA);
+		t.addSeed(qtrX+1, qtrZ,   typeA);
+		t.addSeed(qtrX+1, qtrZ+1, typeA);
+		
+		qtrX = dims.x-qtrX;
+		qtrZ = dims.z-qtrZ;
+		t.addSeed(qtrX,   qtrZ,   typeB);
+		t.addSeed(qtrX,   qtrZ+1, typeB);
+		t.addSeed(qtrX+1, qtrZ,   typeB);
+		t.addSeed(qtrX+1, qtrZ+1, typeB);
 		
 		return t;
 	}

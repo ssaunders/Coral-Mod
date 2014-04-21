@@ -208,7 +208,7 @@ public class TestConfig {
 			if(getTimeRemaining() > 1) { //if time remaining > 1 min
 				String data = getTimeElapsed()+"min of "+CoralCommandBlock.timeToMin(duration)+"min; "
 						+getTimeRemaining()+"min remaining";
-				CoralCommandBlock.writeToFile(path, "_UNFINISHED", "", data);
+				CoralCommandBlock.writeToFile(path, "_Aborted", "", data);
 			}
 		}
 	}

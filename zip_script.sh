@@ -55,6 +55,6 @@ else
     csvList=$(find -name "2014*.txt")
     for line in $csvList
 	do
-        $(bzip2 -k $line);
+        $(bzip2 -k --best $line);
 	done
 fi
