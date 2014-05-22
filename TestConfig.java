@@ -161,7 +161,7 @@ public class TestConfig {
 		SeedConfig coralSeed;
 		int relX, relZ, seedY, numCoralPlaced=0;
 		StringBuilder goodKeys = new StringBuilder();
-		Point3D dimensions = CoralCommandBlock.getDims();
+		Point3D dimensions = BlockCommand.getDims();
 		
 		setStartTime();
 		csv = new StringBuilder(new SimpleDateFormat("hh:mm").format(new Date(getStartTime()))+
@@ -184,7 +184,7 @@ public class TestConfig {
 			}
 		}
 		if(numCoralPlaced == 0) {
-			String error = "^ No coral placed. Skipping test. Test "+CoralCommandBlock.getCurrentTestNumber();
+			String error = "^ No coral placed. Skipping test. Test "+BlockCommand.getCurrentTestNumber();
 			System.out.println(error);
 			addError(error);
 			success = false;
@@ -199,25 +199,25 @@ public class TestConfig {
 
 	public void endTest() {
 		if(getStartTime() != 0) {
-			String path = CoralCommandBlock.getCurrentPath(true);
-			CoralCommandBlock.writeToFile(path, "_Description_"+uniqueId, "", this.toString());
-			CoralCommandBlock.writeToFile(path, "_Stats_"+uniqueId, "", this.csv.toString(), "csv");
+			String path = BlockCommand.getCurrentPath(true);
+			BlockCommand.writeToFile(path, "_Description_"+uniqueId, "", this.toString());
+			BlockCommand.writeToFile(path, "_Stats_"+uniqueId, "", this.csv.toString(), "csv");
 			if(errorCount > 0) {
-				CoralCommandBlock.writeToFile(path, "_Errors_"+uniqueId, "Errors:\n", errors.toString());
+				BlockCommand.writeToFile(path, "_Errors_"+uniqueId, "Errors:\n", errors.toString());
 			}
 			if(getTimeRemaining() > 1) { //if time remaining > 1 min
-				String data = getTimeElapsed()+"min of "+CoralCommandBlock.timeToMin(duration)+"min; "
+				String data = getTimeElapsed()+"min of "+BlockCommand.timeToMin(duration)+"min; "
 						+getTimeRemaining()+"min remaining";
-				CoralCommandBlock.writeToFile(path, "_Aborted", "", data);
+				BlockCommand.writeToFile(path, "_Aborted", "", data);
 			}
 		}
 	}
 	
 	public void abort() {
-		String path = CoralCommandBlock.getCurrentPath(true);
-		CoralCommandBlock.writeToFile(path, "_Aborted", "", "");
+		String path = BlockCommand.getCurrentPath(true);
+		BlockCommand.writeToFile(path, "_Aborted", "", "");
 		if(errorCount > 0) {
-			CoralCommandBlock.writeToFile(path, "_Errors", "Errors:\n", errors.toString());
+			BlockCommand.writeToFile(path, "_Errors", "Errors:\n", errors.toString());
 		}
 	}
 

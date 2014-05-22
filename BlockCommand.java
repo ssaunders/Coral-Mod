@@ -21,7 +21,7 @@ import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class CoralCommandBlock extends BlockContainer {
+public class BlockCommand extends BlockContainer {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 	
@@ -238,7 +238,7 @@ public class CoralCommandBlock extends BlockContainer {
     
 	
 	/* CONSTRUCTOR */
-	public CoralCommandBlock(int id) {
+	public BlockCommand(int id) {
 		super(id, Material.ground);
 		setHardness(0.5F);
 		

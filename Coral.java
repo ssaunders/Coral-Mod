@@ -31,7 +31,7 @@ public class Coral {
 	public static Block deepCoral;
 	public static Block weedCoral;
 	public static Block airCoral;
-	public static CoralCommandBlock commandBlock;
+	public static BlockCommand commandBlock;
 
 	/***MOD STUFF***/
     // The instance of your mod that Forge uses.
@@ -45,7 +45,7 @@ public class Coral {
     @EventHandler // used in 1.6.2
     public void preInit(FMLPreInitializationEvent event) {
     	int first = 500;
-    	commandBlock = new CoralCommandBlock(first - 1);
+    	commandBlock = new BlockCommand(first - 1);
     	coralBlock = new BlockCoral(first);
     	redCoral   = new BlockCoralRed(  CORAL_TYPE.getBlockId(CORAL_TYPE.RED));
     	blueCoral  = new BlockCoralBlue( CORAL_TYPE.getBlockId(CORAL_TYPE.BLUE));
