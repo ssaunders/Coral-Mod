@@ -17,20 +17,23 @@ EOF
 
 CHANGE_DIR=1
 DIR="/cygdrive/c/Users/${USER}/Desktop/Coral_Tests/"
-while getopts “:hcd:” OPTION
+NUM=0
+while getopts “:hcd:n:” OPTION
 do
-     case $OPTION in
-         h)
-             usage
-             exit 1;;
-         d)
-             DIR=$OPTARG;;
-         c)
-             CHANGE_DIR=0;;
-         ?)
-             usage
-             exit;;
-     esac
+    case $OPTION in
+        h)
+            usage
+            exit 1;;
+        d)
+            DIR=$OPTARG;;
+        c)
+            CHANGE_DIR=0;;
+        n)
+            NUM=$OPTARG;;
+        ?)
+            usage
+            exit;;
+    esac
 done
 
 if [ $CHANGE_DIR -eq 1 ]
@@ -48,7 +51,14 @@ fi
 processConcat() 
 {
     CONCAT_SIZES=
-    cd "$(ls | grep "Concat")"
+    echo "NUM $NUM"
+    if [ $NUM -eq 0 ]
+    then
+        cd "$(ls | grep "Concat")"
+    else 
+        echo 'b) num not 0'
+        cd "every_"$NUM
+    fi
 
     for fName in $(ls | grep .bz2)
     do
@@ -93,7 +103,16 @@ processTest()  #1-folder name 2-file list
     
     local TIMES=
     local SIZES=
-    local TXT_FILES=$(echo "$2" | grep .bz2)
+
+    local TXT_FILES=
+    if [ $NUM -eq 0 ]
+    then
+        TXT_FILES=$(echo "$2" | grep .bz2)
+    else 
+        echo 'a) num not 0'
+        TXT_FILES=$(ls | grep bz2 | awk 'NR%'$NUM'==1')
+    fi
+
     for tfName in $TXT_FILES
     do
         SIZES=$SIZES$(stat -c%s "$tfName"),

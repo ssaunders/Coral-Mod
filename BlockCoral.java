@@ -549,7 +549,7 @@ public class BlockCoral extends Block {
 			}
 		}
 		
-		lightLvl = ((lightLvl+1) / 4);
+		lightLvl = (int)Math.ceil(lightLvl / 4.);
 		if(lightLvl < photoFactor) {
 			growth += lightLvl;
 		} else {
@@ -581,7 +581,7 @@ public class BlockCoral extends Block {
 			ngbrVal = (-enemies + friends);
 		}
 		
-		lightLvl = ((lightLvl+1) / 4);
+		lightLvl = (int)Math.ceil(lightLvl / 4.);
 		if(lightLvl < photoFactor) {
 			growth += lightLvl;
 		} else {
