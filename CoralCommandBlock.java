@@ -32,7 +32,7 @@ public class CoralCommandBlock extends BlockContainer {
 		
 		TestFactory.setDims(getDims());
 ///*		
-		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(10, 1, CORAL_TYPE.RED));
 		tests.get(0).addPrefix("trash");
 /*	//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
@@ -61,21 +61,30 @@ public class CoralCommandBlock extends BlockContainer {
 				}
 		}	//*/
 		
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
 
 		int totalTime = getAllTestsApxRunTime();
 		
 		System.out.println("@@@@");
 		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
-		System.out.println("@@@@");
+		System.out.println("@@@@ Dims: "+getDims());
 	}
 	public String getFacilityName(World world, int x, int y, int z) { 
 		int belowBlock = world.getBlockId(x, y-1, z);
@@ -105,7 +114,7 @@ public class CoralCommandBlock extends BlockContainer {
 	
 	/* GENERAL TEST INFORMATION */
 //	private static final Point3D TEST_DIMS = new Point3D(50,0,50);	/*	//50x50		
-	private static final Point3D TEST_DIMS = new Point3D(82,0,82);		//82x82		*/
+	private static final Point3D TEST_DIMS = new Point3D(80,20,80);		//82x82		*/
 	private static ArrayList<Point3D> blockCoor=new ArrayList<Point3D>();
 		private static Point3D getBlockCoor() {
 			if(blockCoor.size() > 0)
@@ -144,27 +153,54 @@ public class CoralCommandBlock extends BlockContainer {
 			else
 				return dimensions;
 		}
-		private void setDims(Point3D newDims, World world, int x, int y, int z) {
-			if(newDims.x > 2 && newDims.z > 2) {				
-				if(newDims.y < 2) {
-					int lowestPoint = 10000, top = 0;
-					for(int xIncr = 1; xIncr < newDims.x+1; ++xIncr) {
-						for(int zIncr = 1; zIncr < newDims.z+1; ++zIncr) {
-							top = world.getTopSolidOrLiquidBlock(x+xIncr, z+zIncr);
-							if(lowestPoint > top) {
-								lowestPoint = top;
+//		private void setDims(Point3D newDims, World world, int x, int y, int z) {
+//			if(newDims.x > 2 && newDims.z > 2) {				
+//				if(newDims.y < 2) {
+//					int lowestPoint = 10000, top = 0;
+//					for(int xIncr = 1; xIncr < newDims.x+1; ++xIncr) {
+//						for(int zIncr = 1; zIncr < newDims.z+1; ++zIncr) {
+//							top = world.getTopSolidOrLiquidBlock(x+xIncr, z+zIncr);
+//							if(lowestPoint > top) {
+//								lowestPoint = top;
+//							}
+//						}
+//					}
+//					dimensions = new Point3D(newDims.x, y-lowestPoint, newDims.z);
+//					if(y-lowestPoint < 2) { System.out.println("!!!! Test height is <2. Tests will be ineffective."); }
+//				} else {
+//					dimensions = newDims;
+//				}
+//				relativeDimensions = new Point3D(dimensions.x+x,dimensions.y+y, dimensions.z+z); 
+//			} else {
+//				setDims(new Point3D(20,0,20), world, x, y, z);
+//			}
+//		}
+	/** Direction is the x,z offset to head in. The command block figures it out every time it starts. */
+	private static Point3D direction = null;
+		public static Point3D getDirection() { 
+			if(direction == null) ;
+				
+			return direction; 
 							}
+		private static void setDirection(World world, int x, int y, int z) {
+			if(world.getBlockMaterial(x+1, y-1, z+1) == Material.water ) 
+			{
+				direction = new Point3D(1,-1,1);
 						}
+			else if(world.getBlockMaterial(x-1, y-1, z+1) == Material.water ) 
+			{
+				direction = new Point3D(-1,-1,1);
 					}
-					dimensions = new Point3D(newDims.x, y-lowestPoint, newDims.z);
-					if(y-lowestPoint < 2) { System.out.println("!!!! Test height is <2. Tests will be ineffective."); }
-				} else {
-					dimensions = newDims;
+			else if(world.getBlockMaterial(x+1, y-1, z-1) == Material.water ) 
+			{
+				direction = new Point3D(1,-1,-1);
 				}
-				relativeDimensions = new Point3D(dimensions.x+x,dimensions.y+y, dimensions.z+z); 
+			else if(world.getBlockMaterial(x-1, y-1, z-1) == Material.water ) {
+				direction = new Point3D(-1,-1,-1);
 			} else {
-				setDims(new Point3D(20,0,20), world, x, y, z);
+				System.out.println("Where did you put me? I can't find water! -CMD Block");
 			}
+			System.out.println("Set direction to "+ direction.toPoint());
 		}
 	/** The dimensions added to the location of the command block. 
 	 * This is the point on the opposite corner of the cube-shaped testing area.*/
@@ -223,9 +259,10 @@ public class CoralCommandBlock extends BlockContainer {
 	public boolean onBlockActivated(World world, int x, int y, int z, 
 			EntityPlayer player, int par6, float par7, float par8, float par9) {
 		addBlockCoor(x, y, z);
-		if (dimensions == null) {
-			setDims(TEST_DIMS, world, x, y, z);
-		}
+//		if (dimensions == null) {
+//			setDims(TEST_DIMS, world, x, y, z);
+//		}
+		setDirection(world, x, y, z);
         if (!world.isRemote)
         {
 			if(!active) { //start condition
@@ -238,7 +275,7 @@ public class CoralCommandBlock extends BlockContainer {
 					player.addChatMessage("Unable to execute tests. Stopping.");
 					active = false;
 				}
-			} else if(world.getBlockId(x, y+1, z) == torchWood.blockID) { //check for torch
+			} else if(world.getBlockId(x, y+1, z) == torchWood.blockID) { //Manual override for end execution
 				active = false;
 				player.addChatMessage("Stopping execution of tests. Ran "+(getRunNumber()-1)+" tests in "+getTotalTimeElapsed()+"min.");
 				if(printMsgs) System.out.println("===X Stopping execution of tests. Ran "+(getRunNumber()-1)+" tests in "+getTotalTimeElapsed()+"min.");
@@ -248,7 +285,7 @@ public class CoralCommandBlock extends BlockContainer {
 				}
 				resetEnvironment(world, x, y, z);
 				active = false;
-			} else {
+			} else {	//End execution warning
 				player.addChatMessage(
 					"Running test "+getCurrentTestNumber()+". Time remaining: "+getCurrentTest().getTimeRemaining()
 					+".\n Executed "+(getRunNumber()-1)+" tests. Elapsed time: "+getTotalTimeElapsed()
@@ -405,9 +442,9 @@ public class CoralCommandBlock extends BlockContainer {
 	/** Kills everything, sets dimensions, and zeros out control variables */
 	private void resetEnvironment(World world, int x, int y, int z) {
 		clearBlockCoor(x, y, z);
-		if (dimensions == null) {
-			setDims(TEST_DIMS, world, x, y, z);
-		}
+//		if (dimensions == null) {
+//			setDims(TEST_DIMS, world, x, y, z);
+//		}
 		killAll(world, x, y, z);
 		firstRun = 0;
 		lastSurvey = 0;
@@ -437,7 +474,7 @@ public class CoralCommandBlock extends BlockContainer {
     
 	/** The test at position # **/
 	private static int testNumber=0;
-	/** Gets the number of test that is being run. **Different than than the run number** **/
+	/** Gets the number of test that is being run. **Different than the run number** **/
 	public static int getCurrentTestNumber() {
 		return testNumber;
 	}
@@ -529,12 +566,14 @@ public class CoralCommandBlock extends BlockContainer {
 		if(printMsgs) System.out.println("~~~~ surveyed! "+lastSurvey);
 		StringBuilder currTest = new StringBuilder();
 		int tempHealth, idx;
-//		int high=-1, low=101, medn=-1, mode=-1;
+//		int high=-1, low=1000, medn=-1, mode=-1;
+		Point3D dims = getDims();
+		Point3D dir = getDirection();
 		
-		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {
-			for(int zPos = z+1; zPos < z + dimensions.z; ++zPos) {
+		for(int xPos = x+dir.x; Math.abs(xPos - x) <= dims.x; xPos += dir.x) {
+			for(int zPos = z+dir.z; Math.abs(zPos - z) <= dims.z; zPos += dir.z) {
 				//3-scan
-				for(int yPos = y-1; yPos >= y - dimensions.y; --yPos) {	//TODO test if >= works ok
+				for(int yPos = y+dir.y; Math.abs(yPos - y) <= dims.y; yPos += dir.y) {
 					int bId = world.getBlockId(xPos, yPos, zPos);
 					if(Coral.isCoral(bId)){
 						tempHealth = Coral.coralBlock.getHealth(xPos, yPos, zPos);
@@ -544,8 +583,13 @@ public class CoralCommandBlock extends BlockContainer {
 							cumHealth[idx] += tempHealth;
 						}
 					}
-					currTest.append(String.format("%03d", bId));		//TODO add high/low/mean/median/mode health
-//					TODO SHOULD I JUST OUTPUT ALL THE HEALTHS?
+					currTest.append(String.format("%03d", bId));
+					//TODO SHOULD I JUST OUTPUT ALL THE HEALTHS?		//TODO add high/low/mean/median/mode health
+					
+					//Debug:
+					if(world.getBlockMaterial(xPos, yPos, zPos)!= Material.water && bId != Block.dirt.blockID) {
+						System.out.println(Block.blocksList[bId].getLocalizedName()+" shouldn't be at ("+xPos+","+yPos+","+zPos+")");
+					}
 				}
 				
 				//top scan
@@ -570,7 +614,7 @@ public class CoralCommandBlock extends BlockContainer {
 		writeToFile(getCurrentPath(true), getSurveyFileName(getSurveyNum()), num, currTest.toString());
 		
 		if(prevSurvey.length() > 0) System.out.println(getCurrentTest().getUniqueId()+" prev: "+prevSurvey.substring(0,15));
-		System.out.println(getCurrentTest().getUniqueId()+" curr: "+currTest.substring(0,15));
+		System.out.println(getCurrentTest().getUniqueId());
 		
 		if(surveyNum > 1) {
 			writeToFile(getCurrentPath(true)+"Concatenated_Tests\\", getConcatFileName(getSurveyNum()), num, prevSurvey.append(currTest).toString());
@@ -584,19 +628,34 @@ public class CoralCommandBlock extends BlockContainer {
 	private void killAll(World world, int x, int y, int z) {
 		if(printMsgs) System.out.println("XXXX killAll");
 		int yPos;
+		Point3D dims = getDims();
+		Point3D dir = getDirection();
 		
-		if(dimensions == null) {
+		if(dims == null) {
 			System.out.println("!!!! Dimensions is null. Could not kill anything. ");
 			return;
 		}
-		for(int xIncr = 1; xIncr < dimensions.x+1; ++xIncr) {			
-			for(int zIncr = 1; zIncr < dimensions.z+1; ++zIncr) {
+
+		System.out.println("xpos, etc");
+		for(int xPos = x+dir.x; Math.abs(xPos - x) <= dims.x; xPos += dir.x) {
+			for(int zPos = z+dir.z; Math.abs(zPos - z) <= dims.z; zPos += dir.z) {
+				yPos= world.getTopSolidOrLiquidBlock(xPos, zPos);
+				System.out.print(new Point3D(xPos, yPos, zPos)+" ");
+			}
+			System.out.println("");
+		}
+		
+		System.out.println("\nxincr, etc");
+		for(int xIncr = 1; xIncr < dims.x+dir.x; ++xIncr) {			
+			for(int zIncr = 1; zIncr < dims.z+dir.z; ++zIncr) {
 				yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
 //					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
 					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
 				}
+				System.out.print(new Point3D(xIncr+x, yPos, zIncr+z)+" ");
 			}
+			System.out.println("");
 		}
 	}
 	
