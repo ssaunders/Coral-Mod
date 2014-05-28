@@ -556,7 +556,7 @@ public class BlockControlBlock extends BlockContainer {
 					currTest.append(String.format("%03d", bId));
 					//TODO SHOULD I JUST OUTPUT ALL THE HEALTHS?		//TODO add high/low/mean/median/mode health
 					
-					//Debug:
+					//Debug: 
 					if(world.getBlockMaterial(xPos, yPos, zPos)!= Material.water && bId != Block.dirt.blockID) {
 						System.out.println(Block.blocksList[bId].getLocalizedName()+" shouldn't be at ("+xPos+","+yPos+","+zPos+")");
 					}
