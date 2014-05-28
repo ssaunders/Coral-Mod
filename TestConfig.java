@@ -162,7 +162,6 @@ public class TestConfig {
 		int relX, relZ, seedY, numCoralPlaced=0;
 		StringBuilder goodKeys = new StringBuilder();
 		Point3D dimensions = BlockControlBlock.getDims();
-		Point3D direction = BlockControlBlock.getDirection(world, x,y,z);
 		
 		setStartTime();
 		csv = new StringBuilder(new SimpleDateFormat("hh:mm").format(new Date(getStartTime()))+

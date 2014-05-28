@@ -177,35 +177,7 @@ public class BlockControlBlock extends BlockContainer {
 //				setDims(new Point3D(20,0,20), world, x, y, z);
 //			}
 //		}
-	/** Direction is the x,z offset to head in. The command block figures it out every time it starts. */
-	private static Point3D direction = null;
-		public static Point3D getDirection(World w, int x, int y, int z) { 
-			if(direction == null) {
-				setBlockCoor(x, y, z);
-				setDirection(w, x, y, z);
-			}
-			return direction; 
-		}
-		private static void setDirection(World world, int x, int y, int z) {
-			if(world.getBlockMaterial(x+1, y-1, z+1) == Material.water ) 
-			{
-				direction = new Point3D(1,-1,1);
-			}
-			else if(world.getBlockMaterial(x-1, y-1, z+1) == Material.water ) 
-			{
-				direction = new Point3D(-1,-1,1);
-			}
-			else if(world.getBlockMaterial(x+1, y-1, z-1) == Material.water ) 
-			{
-				direction = new Point3D(1,-1,-1);
-			}
-			else if(world.getBlockMaterial(x-1, y-1, z-1) == Material.water ) {
-				direction = new Point3D(-1,-1,-1);
-			} else {
-				System.out.println("Where did you put me? I can't find water! -CMD Block");
-			}
-			System.out.println("Set direction to "+ direction.toPoint()+". Loc: "+new Point3D(x+direction.x,y+direction.y,z+direction.z).toPoint());
-		}
+	
 	/** The dimensions added to the location of the command block. 
 	 * This is the point on the opposite corner of the cube-shaped testing area.*/
 		public Point3D getRelativeDimensions() {return relativeDimensions;}
@@ -266,7 +238,6 @@ public class BlockControlBlock extends BlockContainer {
 //		if (dimensions == null) {
 //			setDims(TEST_DIMS, world, x, y, z);
 //		}
-		setDirection(world, x, y, z);
         if (!world.isRemote)
         {
 			if(!active) { //start condition
@@ -385,7 +356,6 @@ public class BlockControlBlock extends BlockContainer {
 	public void onBlockAdded(World world, int x, int y, int z) {
 		System.out.println("Command Block added at "+new Point3D(x,y,z).toPoint() );
 		setBlockCoor(x, y, z);
-		setDirection(world, x, y, z);
 		super.onBlockAdded(world, x, y, z);
 	}
 	
@@ -569,12 +539,11 @@ public class BlockControlBlock extends BlockContainer {
 		int tempHealth, idx;
 //		int high=-1, low=1000, medn=-1, mode=-1;
 		Point3D dims = getDims();
-		Point3D dir = getDirection(world, x,y,z);
 		
-		for(int xPos = x+dir.x; Math.abs(xPos - x) <= dims.x; xPos += dir.x) {
-			for(int zPos = z+dir.z; Math.abs(zPos - z) <= dims.z; zPos += dir.z) {
+		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {
+			 for(int zPos = z+1; zPos < z + dimensions.z; ++zPos) {
 				//3-scan
-				for(int yPos = y+dir.y; Math.abs(yPos - y) <= dims.y; yPos += dir.y) {
+				for(int yPos = y-1; yPos >= y - dimensions.y; --yPos) {
 					int bId = world.getBlockId(xPos, yPos, zPos);
 					if(Coral.isCoral(bId)){
 						tempHealth = Coral.coralBlock.getHealth(xPos, yPos, zPos);
@@ -630,42 +599,21 @@ public class BlockControlBlock extends BlockContainer {
 		if(printMsgs) System.out.println("XXXX killAll");
 		int yPos;
 		Point3D dims = getDims();
-		Point3D dir = getDirection(world, x,y,z);
 		
 		if(dims == null) {
 			System.out.println("!!!! Dimensions is null. Could not kill anything. ");
 			return;
 		}
-		
-		boolean newline = false; int count = 0;
-		System.out.println("xpos, etc "+dir.toPoint());
-		for(int xPos = x+dir.x; Math.abs(xPos - x) <= dims.x; xPos += dir.x) {
-			for(int zPos = z+dir.z; Math.abs(zPos - z) <= dims.z; zPos += dir.z) {
-				yPos= world.getTopSolidOrLiquidBlock(xPos, zPos);
-				if(count < 10 && !world.isRemote) {
-					System.out.print("("+xPos+","+yPos+","+zPos+") ");
-					newline = true;
+						
+		for(int xIncr = 1; xIncr < dimensions.x+1; ++xIncr) {
+			 for(int zIncr = 1; zIncr < dimensions.z+1; ++zIncr) {
+			 	yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
+				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
+//					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
+					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
 				}
-			}
-			if(newline) { System.out.println(""); newline = false; count++;}
+			 }
 		}
-//		System.out.println("");
-//		System.out.println("\nxincr, etc "+dir.toPoint()+" "+new Point3D(x, y, z));
-//		for(int xIncr = 1; xIncr < dims.x+dir.x; ++xIncr) {			
-//			for(int zIncr = 1; zIncr < dims.z+dir.z; ++zIncr) {
-//				yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
-//				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
-////					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
-//					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
-//				}
-//				if(xIncr < 10 && !world.isRemote) {
-//					System.out.print("("+(xIncr+x)+","+yPos+","+(zIncr+z)+") ");
-//					newline = true;
-//				}
-//			}
-//			if(newline) { System.out.println(""); newline = false; }
-//		}
-//		System.out.println("");
 	}
 	
 
