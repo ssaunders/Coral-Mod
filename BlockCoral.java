@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 
 @SuppressWarnings("unused")
 public class BlockCoral extends Block {
-	private boolean printMsgs = BlockCommand.showMessages();
+	private boolean printMsgs = BlockControlBlock.showMessages();
 	// // General Functions/Variables // // 
 	public static enum CORAL_TYPE {
 		RED, ORANGE, YELLOW, GREEN, BLUE, PINK, DEEP, WEED, AIR, RANDOM;
@@ -254,7 +254,7 @@ public class BlockCoral extends Block {
 	// // MINECRAFT FUNCTIONS // //
 	@Override	// One 'turn'. Grow, then split or die
 	public void updateTick(World world, int x, int y, int z, Random random) {
-		TestConfig t = BlockCommand.getCurrentTest();
+		TestConfig t = BlockControlBlock.getCurrentTest();
 		if(t == null) {	//if there is not a test going on, don't bother
 			return;
 		}

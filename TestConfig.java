@@ -161,7 +161,8 @@ public class TestConfig {
 		SeedConfig coralSeed;
 		int relX, relZ, seedY, numCoralPlaced=0;
 		StringBuilder goodKeys = new StringBuilder();
-		Point3D dimensions = BlockCommand.getDims();
+		Point3D dimensions = BlockControlBlock.getDims();
+		Point3D direction = BlockControlBlock.getDirection(world, x,y,z);
 		
 		setStartTime();
 		csv = new StringBuilder(new SimpleDateFormat("hh:mm").format(new Date(getStartTime()))+
@@ -184,7 +185,7 @@ public class TestConfig {
 			}
 		}
 		if(numCoralPlaced == 0) {
-			String error = "^ No coral placed. Skipping test. Test "+BlockCommand.getCurrentTestNumber();
+			String error = "^ No coral placed. Skipping test. Test "+BlockControlBlock.getCurrentTestNumber();
 			System.out.println(error);
 			addError(error);
 			success = false;
@@ -199,25 +200,25 @@ public class TestConfig {
 
 	public void endTest() {
 		if(getStartTime() != 0) {
-			String path = BlockCommand.getCurrentPath(true);
-			BlockCommand.writeToFile(path, "_Description_"+uniqueId, "", this.toString());
-			BlockCommand.writeToFile(path, "_Stats_"+uniqueId, "", this.csv.toString(), "csv");
+			String path = BlockControlBlock.getCurrentPath(true);
+			BlockControlBlock.writeToFile(path, "_Description_"+uniqueId, "", this.toString());
+			BlockControlBlock.writeToFile(path, "_Stats_"+uniqueId, "", this.csv.toString(), "csv");
 			if(errorCount > 0) {
-				BlockCommand.writeToFile(path, "_Errors_"+uniqueId, "Errors:\n", errors.toString());
+				BlockControlBlock.writeToFile(path, "_Errors_"+uniqueId, "Errors:\n", errors.toString());
 			}
 			if(getTimeRemaining() > 1) { //if time remaining > 1 min
-				String data = getTimeElapsed()+"min of "+BlockCommand.timeToMin(duration)+"min; "
+				String data = getTimeElapsed()+"min of "+BlockControlBlock.timeToMin(duration)+"min; "
 						+getTimeRemaining()+"min remaining";
-				BlockCommand.writeToFile(path, "_Aborted", "", data);
+				BlockControlBlock.writeToFile(path, "_Aborted", "", data);
 			}
 		}
 	}
 	
 	public void abort() {
-		String path = BlockCommand.getCurrentPath(true);
-		BlockCommand.writeToFile(path, "_Aborted", "", "");
+		String path = BlockControlBlock.getCurrentPath(true);
+		BlockControlBlock.writeToFile(path, "_Aborted", "", "");
 		if(errorCount > 0) {
-			BlockCommand.writeToFile(path, "_Errors", "Errors:\n", errors.toString());
+			BlockControlBlock.writeToFile(path, "_Errors", "Errors:\n", errors.toString());
 		}
 	}
 

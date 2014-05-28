@@ -25,6 +25,11 @@ public class Point3D extends Point
         // Assign the Z coordinate.
         setZ(z);
     }
+    public Point3D()
+    {
+    	super(0, 0);
+    	setZ(0);
+    }
 
 
     /**
@@ -56,9 +61,15 @@ public class Point3D extends Point
     	return p.x == x && p.y == y && p.z == z;
     }
     
+    /** Returns classic java toString syntax:   
+     * "coral.Point3D[x,y,z]"
+     */
     public String toString() { 
     	return "coral.Point3D[x="+x+",y="+y+",z="+z+"]";
     }
+    /** Returns the pretty version:  
+     * "(x, y, z)"
+     */
     public String toPoint() { 
     	return "("+x+","+y+","+z+")";
     }
