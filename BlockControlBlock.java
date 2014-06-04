@@ -680,7 +680,7 @@ public class BlockControlBlock extends BlockContainer {
 	
 	@Override
 	public TileEntity createNewTileEntity(World world) {
-		TileEntityCommandBlock tecb = new TileEntityCommandBlock();
+		TileEntityControlBlock tecb = new TileEntityControlBlock();
 		return tecb;
 	}
 	

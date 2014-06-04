@@ -74,7 +74,7 @@ public class Coral {
     	
     	GameRegistry.registerBlock(commandBlock, "cmdCoralBlock");
     	LanguageRegistry.addName(commandBlock, "Coral Command Block");
-    	GameRegistry.registerTileEntity(coral.TileEntityCommandBlock.class, "tecb");
+    	GameRegistry.registerTileEntity(coral.TileEntityControlBlock.class, "tecb");
 
         proxy.registerRenderers();
     }
