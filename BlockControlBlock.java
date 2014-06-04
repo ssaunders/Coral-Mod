@@ -540,10 +540,10 @@ public class BlockControlBlock extends BlockContainer {
 //		int high=-1, low=1000, medn=-1, mode=-1;
 		Point3D dims = getDims();
 		
-		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {
-			 for(int zPos = z+1; zPos < z + dimensions.z; ++zPos) {
+		for(int xPos = x+1; xPos < x + dims.x; ++xPos) {
+			 for(int zPos = z+1; zPos < z + dims.z; ++zPos) {
 				//3-scan
-				for(int yPos = y-1; yPos >= y - dimensions.y; --yPos) {
+				for(int yPos = y-1; yPos >= y - dims.y; --yPos) {
 					int bId = world.getBlockId(xPos, yPos, zPos);
 					if(Coral.isCoral(bId)){
 						tempHealth = Coral.coralBlock.getHealth(xPos, yPos, zPos);
@@ -605,8 +605,8 @@ public class BlockControlBlock extends BlockContainer {
 			return;
 		}
 						
-		for(int xIncr = 1; xIncr < dimensions.x+1; ++xIncr) {
-			 for(int zIncr = 1; zIncr < dimensions.z+1; ++zIncr) {
+		for(int xIncr = 1; xIncr < dims.x+1; ++xIncr) {
+			 for(int zIncr = 1; zIncr < dims.z+1; ++zIncr) {
 			 	yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
 //					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
