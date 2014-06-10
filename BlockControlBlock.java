@@ -21,7 +21,7 @@ import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockControlBlock extends BlockContainer {
+public class BlockControlBlock extends Block {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 	
@@ -33,7 +33,7 @@ public class BlockControlBlock extends BlockContainer {
 		
 		TestFactory.setDims(getDims());
 ///*		
-		tests.add(TestFactory.get4GroupTest(10, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
 		tests.get(0).addPrefix("trash");
 /*	//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
@@ -62,24 +62,24 @@ public class BlockControlBlock extends BlockContainer {
 				}
 		}	//*/
 		
-//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
 
 		int totalTime = getAllTestsApxRunTime();
 		
@@ -251,15 +251,14 @@ public class BlockControlBlock extends BlockContainer {
 					active = false;
 				}
 			} else if(world.getBlockId(x, y+1, z) == torchWood.blockID) { //Manual override for end execution
-				active = false;
 				player.addChatMessage("Stopping execution of tests. Ran "+(getRunNumber()-1)+" tests in "+getTotalTimeElapsed()+"min.");
 				if(printMsgs) System.out.println("===X Stopping execution of tests. Ran "+(getRunNumber()-1)+" tests in "+getTotalTimeElapsed()+"min.");
 				TestConfig tcfg = getCurrentTest();
 				if(tcfg != null) {
 					tcfg.endTest();
 				}
-				resetEnvironment(world, x, y, z);
 				active = false;
+				resetEnvironment(world, x, y, z);
 			} else {	//End execution warning
 				player.addChatMessage(
 					"Running test "+getCurrentTestNumber()+". Time remaining: "+getCurrentTest().getTimeRemaining()
@@ -376,8 +375,8 @@ public class BlockControlBlock extends BlockContainer {
 					return super.canPlaceBlockAt(world, x, y, z);
 				} else { System.out.println("!!!! Block Coordinates were not attached to a command block"); }
 			} else {
-				messagePlayers(world, "A coral command block already exists. To move the block, place on top of a torch.");
-				System.out.println("A coral command block already exists. To move the block, place on top of a torch.");
+				messagePlayers(world, "A coral command block already exists. To move the block, place on top of a red torch.");
+				System.out.println("A coral command block already exists. To move the block, place on top of a red torch.");
 				return false;
 			}
 		}
@@ -433,7 +432,7 @@ public class BlockControlBlock extends BlockContainer {
 	private static ArrayList<TestConfig> tests = new ArrayList<TestConfig>();
 	/** Returns the test config of the current running test. Returns null if no tests are running */
     public static TestConfig getCurrentTest() {
-    	if(testNumber < getTotalNumTests() && active) {
+    	if(testNumber <= getTotalNumTests() - 1 && active) {
     		return tests.get(testNumber);
     	} else {
     		return null;
@@ -638,25 +637,6 @@ public class BlockControlBlock extends BlockContainer {
 		return name.toString();
 	}
 	
-	//? time between surveys, testing facility, spread (is it even interesting?)
-	
-	/* What questions are you trying to answer?
-	 ** Notes ON THE FACILITY **
-	 *  Experimental/Indep variables
-	 *    Complexity of environment (slope, hills, soils, height, etc)
-	 *    Initial composition of species
-	 *    Parameters controlling species
-	 *   
-	 ** Characterization of corals. ** 
-	 *  Within a simple environment, how do the parameters affect complexity?
-	 *  Multiple tests with a single coral, changing parameters in small way, 
-	 *  to measure their effect on growth. (measuring growth rate in different environments)
-	 *  
-	 *  ^ initial experiments to a) decide corals (make graphs) b) test it works
-	 *  
-	 *  next time have experiment results (50^3) x 3 facilities
-	 */
-	
 	/** Writes the given String to a txt file using the given name. **/
 	public static void writeToFile(String filePath, String fileName, String header, String data) {
 		writeToFile(filePath, fileName, header, data, "txt");
@@ -675,19 +655,19 @@ public class BlockControlBlock extends BlockContainer {
 			e.printStackTrace();
 		}
 		
-		if(printMsgs) System.out.println("<<<< written to file! "+fileName+"."+ext+" "+header);
+//		if(printMsgs) System.out.println("<<<< written to file! "+fileName+"."+ext+" "+header);
 	}
 	
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		TileEntityControlBlock tecb = new TileEntityControlBlock();
-		return tecb;
-	}
-	
-	@Override
-	public boolean hasTileEntity(int metadata) {
-		return true;
-	}
+//	@Override
+//	public TileEntity createNewTileEntity(World world) {
+//		TileEntityControlBlock tecb = new TileEntityControlBlock();
+//		return tecb;
+//	}
+//	
+//	@Override
+//	public boolean hasTileEntity(int metadata) {
+//		return true;
+//	}
 	
 	public void messagePlayers(World world, String msg) {
 		if(active) {
