@@ -5,7 +5,7 @@ usage()
 cat << EOF
 usage: $0 options
 
-This script is meant to get the size of all the bzipped files.
+This script combines txt files according to a delta.
 By default runs in /cygdrive/c/Users/${USER}/Desktop/Coral_Tests
 
 OPTIONS:
