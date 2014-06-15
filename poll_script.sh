@@ -95,6 +95,10 @@ processTest()  #1-folder name 2-file list
 
     processConcat #creates CONCAT_SIZES
     processDesc #creates DESC
+
+    echo "calling settify"
+    $(settify -c)
+
     local HDR=${PWD#*(}
     local RN=${HDR#*)_}
     HDR=${HDR%)*}
@@ -186,7 +190,8 @@ echo "BEGINNING PROCESSING"
 descend .
 echo "FINISHED PROCESSING"
 
-
+#  RESOURCES 
+#-------------------
 # set -- "$STR"
 # IFS=","; declare -a STR_ARRAY=($*)
 # for x in "${STR_ARRAY[@]}"
@@ -195,3 +200,7 @@ echo "FINISHED PROCESSING"
 # done
 
 # get base name: ${PWD##*/}
+
+# echo ${Q//PAT} ;# removes all of PAT from individuals in Q
+# echo ${Q%%.txt}   ;#  BACK http://tldp.org/LDP/abs/html/string-manipulation.html
+# echo ${Q$$.txt}   ;#  FRONT
