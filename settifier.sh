@@ -68,40 +68,35 @@ temp=$(echo $fileList|cut -d " " -f1-3)
 fileList=$(echo $fileList|cut -d " " -f4-);           ##### "10" is a DEBUG
 
 #Set up vars for for loop
-one=$(echo $temp | cut -d " " -f1)
-two=$(echo $temp | cut -d " " -f2)
-three=$(echo $temp | cut -d " " -f3)
-echo "$one|$two|$three"
+fileOne=$(echo $temp | cut -d " " -f1)
+fileTwo=$(echo $temp | cut -d " " -f2)
+fileThree=$(echo $temp | cut -d " " -f3)
 
 declare -i count
 count=4
 
-#four is normally called "line"
-for four in $fileList
+#four is a file name
+for fileFour in $fileList
 do
     numOne=`expr $count - 3`
     numTwo=`expr $count - 2`
     numThree=`expr $count - 1`
     # echo "$numOne $numTwo $numThree \"$SET_DIR/$numOne-$numThree.txt\"  \"$SET_DIR/$numTwo-$count.txt\""
 
-    cat $one $three > "$SET_DIR/$numOne-$numThree.txt"
-    cat $one $four > "$SET_DIR/$numOne-$count.txt"
-    
-    # if [ "$prevTest" != "" ]
-    # then 
-    #     #concat files
-    #     fileName=${prevTest%_*}'~'${line#*_*_}
-    #     #save under new name
-    #     cat "$prevTest" "$line" > "every_$NUM/$fileName"
-    # fi
-    # prevTest=$line
 
-    one=$two
-    two=$three
-    three=$four
+# printf "%0*s\n" 2 "3"
+    fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" 2 $numOne 2 $numThree)
+    cat $fileOne $fileThree > $fileName
+    fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" 2 $numOne 2 $count)
+    cat $fileOne $fileFour > $fileName
+
+    fileOne=$fileTwo
+    fileTwo=$fileThree
+    fileThree=$fileFour
 
     count=`expr $count + 1`
 done
-cat $two $four > "$SET_DIR/$numTwo-`expr $count - 1`.txt"
+fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" 2 $numTwo 2 `expr $count - 1`)
+cat $fileTwo $fileFour > $fileName
 
 # cd _Run12_2014-04-25_0\,52/2014-04-25_00\,52_\(4GT\,R\,3\)_9803/

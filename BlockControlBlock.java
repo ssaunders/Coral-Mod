@@ -97,7 +97,7 @@ public class BlockControlBlock extends Block {
 		} else if(belowBlock == blockGold.blockID) {
 			name = "Ideal";
 		} else if(belowBlock == blockIron.blockID) {
-			name = "Scatter Shaded";
+			name = "Graduated";
 		} else {
 			name="not defined";
 		}
