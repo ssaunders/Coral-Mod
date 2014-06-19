@@ -177,9 +177,11 @@ processTest()  #1-folder name 2-file list
     do
         calcNCD ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]}
         NCD_A3[pos]=$result
+        # echo "3 - ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]} | $result"
         
         calcNCD ${surveyAry[$pos]} ${surveyAry[$pos+3]} ${NCD_D[2*$pos+1]}
         NCD_A4[pos]=$result
+        # echo "4 - ${surveyAry[$pos]} ${surveyAry[$pos+3]} ${NCD_D[2*$pos+1]} | $result"
     done
     calcNCD ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]}
     NCD_A3[pos]=$result
@@ -195,7 +197,6 @@ processTest()  #1-folder name 2-file list
     for (( pos=0; pos < length; ++pos ))
     do
         sum_sizes=$(echo "scale=7;${surveyAry[$pos]} + ${surveyAry[$pos+1]} + ${surveyAry[$pos+2]} + ${surveyAry[$pos+3]}"|bc)
-        # echo "def      ${surveyAry[$pos]} + ${surveyAry[$pos+1]} + ${surveyAry[$pos+2]} + ${surveyAry[$pos+3]}"
         a=${NCD_A2[$pos]}
         b=${NCD_A2[$pos+1]}
         c=${NCD_A2[$pos+2]}
@@ -209,9 +210,6 @@ processTest()  #1-folder name 2-file list
                                + $d * ( 1 - $d ) + $e * ( 1 - $e ) \
                                + $f * ( 1 - $f ) \
                  "|bc)
-        # echo "hij     $a* ( 1-$a ) + $b* ( 1-$b ) + $c* ( 1-$c ) \
-        #               + $d* ( 1-$d ) + $e* ( 1-$e ) \
-        #               + $f* ( 1-$f )"
         SET_CPX=$SET_CPX$(echo "scale=7;$scalar * $sum_sizes * $sum_ncds"|bc),
     done
 
@@ -221,11 +219,11 @@ processTest()  #1-folder name 2-file list
     echo "size (sgl),$SIZES">>$GLOBAL_FILE
     echo "size (cct),$CONCAT_SIZES">>$GLOBAL_FILE
     echo "ncd,,"$NCD_str>>$GLOBAL_FILE
-    # echo "size (cct_D),$CCT_SIZES_D">>$GLOBAL_FILE
-    # IFS=','
-    # echo "ncd2,,${NCD_A3[*]}">>"$GLOBAL_FILE"
-    # echo "ncd3,,${NCD_A4[*]}">>"$GLOBAL_FILE"
-    # IFS=' '
+    echo "size (cct_D),$CCT_SIZES_D">>$GLOBAL_FILE
+    IFS=','
+    echo "ncd2,,${NCD_A3[*]}">>"$GLOBAL_FILE"
+    echo "ncd3,,${NCD_A4[*]}">>"$GLOBAL_FILE"
+    IFS=' '
     echo "set cpx,,"$SET_CPX>>$GLOBAL_FILE
     echo "">>$GLOBAL_FILE
 }
@@ -264,9 +262,14 @@ fi
 GLOBAL_FILE=$TEST_DIR"Coalesced_$(date +"%y-%m-%d_%H,%M").csv"
 echo "">$GLOBAL_FILE
 
+t1=$(date +"%s")
+echo ""
+
 echo "BEGINNING PROCESSING"
 descend .
-echo "FINISHED PROCESSING"
+t2=$(date +"%s")
+diff=$(($t2-$t1))
+echo "FINISHED PROCESSING ($(($diff / 60))m $(($diff % 60))s)"
 
 #  RESOURCES 
 #-------------------

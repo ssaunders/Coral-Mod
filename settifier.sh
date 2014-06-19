@@ -76,6 +76,7 @@ declare -i count
 count=4
 
 #four is a file name
+spacer=4
 for fileFour in $fileList
 do
     numOne=`expr $count - 3`
@@ -85,9 +86,9 @@ do
 
 
 # printf "%0*s\n" 2 "3"
-    fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" 2 $numOne 2 $numThree)
+    fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" $spacer $numOne $spacer $numThree)
     cat $fileOne $fileThree > $fileName
-    fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" 2 $numOne 2 $count)
+    fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" $spacer $numOne $spacer $count)
     cat $fileOne $fileFour > $fileName
 
     fileOne=$fileTwo
@@ -96,7 +97,8 @@ do
 
     count=`expr $count + 1`
 done
-fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" 2 $numTwo 2 `expr $count - 1`)
+fileName=$(printf "$SET_DIR/2014_%0*d-%0*d.txt" $spacer $numTwo $spacer `expr $count - 1`)
 cat $fileTwo $fileFour > $fileName
 
 # cd _Run12_2014-04-25_0\,52/2014-04-25_00\,52_\(4GT\,R\,3\)_9803/
+
