@@ -13,6 +13,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -87,11 +88,12 @@ public class BlockControlBlock extends Block {
 		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
 		System.out.println("@@@@ Dims: "+getDims());
 	}
-	public String getFacilityName(World world, int x, int y, int z) { 
+	
+	public static String getFacilityName(World world, int x, int y, int z) { 
 		int belowBlock = world.getBlockId(x, y-1, z);
 		String name=null;
 		if(belowBlock == blockDiamond.blockID) {
-			name = "";
+			name = "not filled in";
 		} else if(belowBlock == coalBlock.blockID) {
 			name = "Partitioned Shaded";
 		} else if(belowBlock == blockGold.blockID) {
@@ -123,6 +125,7 @@ public class BlockControlBlock extends Block {
 		}
 		private static void setBlockCoor(int x, int y, int z) {
 			Point3D k = new Point3D(x, y, z);
+			TestFactory.setTestFacility(getFacilityName(Minecraft.getMinecraft().theWorld, x, y, z));
 			
 			if(blockCoor != null && !blockCoor.equals(k)){				
 				System.out.println("!!!! More than one command block running: "+blockCoor);

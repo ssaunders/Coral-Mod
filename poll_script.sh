@@ -1,5 +1,5 @@
 ##!/bin/bash
-
+debug=
 usage()
 {
 cat << EOF
@@ -18,7 +18,7 @@ EOF
 CHANGE_DIR=1
 DIR="/cygdrive/c/Users/${USER}/Desktop/Coral_Tests/"
 NUM=0
-while getopts “:hcd:n:” OPTION
+while getopts “:hcd:n:rv” OPTION
 do
     case $OPTION in
         h)
@@ -30,6 +30,10 @@ do
             CHANGE_DIR=0;;
         n)
             NUM=$OPTARG;;
+        r)
+            roll_call=true;;
+        v)
+            verbose=true;;
         ?)
             usage
             exit;;
@@ -47,6 +51,8 @@ fi
 
 ###   FUNCTIONS   ###
 calcNCD() {     #PARAMS: si, sj, sij
+    if [ $debug ]; then echo "    calcNCD - $1 $2 $3"; fi
+
     local si=$1
     local sj=$2
     local sij=$3
@@ -56,14 +62,15 @@ calcNCD() {     #PARAMS: si, sj, sij
     [[ si -lt sj ]] && min=$si || min=$sj
     [[ si -gt sj ]] && max=$si || max=$sj
 
-    result=$(echo "scale=7;($sij-$min)/$max"|bc)
+    result=$(echo "scale=7;( $sij - $min ) / $max"|bc)
 }
 
 #Returns a list of bz2 file sizes 
 processConcat() 
 {
+    if [ $roll_call ]; then echo "    processConcat"; fi
+
     CONCAT_SIZES=
-    echo "NUM $NUM"
     if [ $NUM -eq 0 ]
     then
         cd "$(ls | grep "Concat")"
@@ -81,29 +88,36 @@ processConcat()
 
 processSets()
 {
+    if [ $roll_call ]; then echo "    processSets"; fi
     if [ ! -d "Set_Directory" ]
     then
-        echo "calling settify"
+        echo "    calling settify"
         settify -c
         zipper -d "Set_Directory"
     fi
 
+    CCT_SIZES_D=
     local i=0
     cd "Set_Directory"
     for fName in $(ls | grep .bz2)
     do
         CCT_SIZES_D=$CCT_SIZES_D,$(stat -c%s "$fName")
     done
+    if [ $verbose ]; then echo "    done"; fi
     cd ..
 }
 
 processDesc() {
+    if [ $roll_call ]; then echo "    processDesc"; fi
+
     local file=$(cat _Description*)
     DESC=$(echo "$file" | grep "Duration"),$(echo "$file" | grep "Facility")
 }
 
 processTest()  #1-folder name 2-file list
 {
+    if [ $roll_call ]; then echo "  processTest $CURR_FOLDER"; fi
+
     # check for completion: _Aborted not here
     if [ "$(echo "$2" | grep "Abort")" != "" ]
     then
@@ -128,6 +142,7 @@ processTest()  #1-folder name 2-file list
     processSets
 
     # HEADER SETUP
+    if [ $verbose ]; then echo "    Headers"; fi
     local HDR=${PWD#*(}
     local RN=${HDR#*)_}
     HDR=${HDR%)*}
@@ -147,6 +162,7 @@ processTest()  #1-folder name 2-file list
     fi
 
     # BEGIN PROCESSING
+    if [ $verbose ]; then echo "    Running stat"; fi
     for tfName in $TXT_FILES
     do
         SIZES=$SIZES$(stat -c%s "$tfName"),
@@ -156,6 +172,7 @@ processTest()  #1-folder name 2-file list
 
     #  ADD NCD delta 1
         #replace , with " "
+    if [ $verbose ]; then echo "    NCD 1"; fi
     local surveyAry=(${SIZES//','/' '})
     local concatAry=(${CONCAT_SIZES//','/' '})
     NCD_str=
@@ -172,21 +189,29 @@ processTest()  #1-folder name 2-file list
     done
 
     #  ADD NCD delta 2,3
+    if [ $verbose ]; then echo "    NCD 2,3"; fi
     length=`expr ${#NCD_D[@]} / 2`
+    echo "ln = $length"
+    CCT_SIZES_3=
+    CCT_SIZES_4=
     for (( pos=0; pos < length; ++pos ))
     do
         calcNCD ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]}
         NCD_A3[pos]=$result
-        # echo "3 - ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]} | $result"
+        # echo "3 - ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]} | $result"     #!D
+        # CCT_SIZES_3=$CCT_SIZES_3,${NCD_D[2*$pos]}       #! comment out in the output below
         
         calcNCD ${surveyAry[$pos]} ${surveyAry[$pos+3]} ${NCD_D[2*$pos+1]}
         NCD_A4[pos]=$result
-        # echo "4 - ${surveyAry[$pos]} ${surveyAry[$pos+3]} ${NCD_D[2*$pos+1]} | $result"
+        # echo "4 - ${surveyAry[$pos]} ${surveyAry[$pos+3]} ${NCD_D[2*$pos+1]} | $result"     #!D
+        # CCT_SIZES_4=$CCT_SIZES_4,${NCD_D[2*$pos+1]}
     done
     calcNCD ${surveyAry[$pos]} ${surveyAry[$pos+2]} ${NCD_D[2*$pos]}
     NCD_A3[pos]=$result
+    CCT_SIZES_3=$CCT_SIZES_3,${NCD_D[2*$pos]}
 
     # ADD SET COMPLEXITY
+    if [ $verbose ]; then echo "    Set Complexity"; fi
     SET_CPX=
     local n=4
     local scalar=.0833333
@@ -196,6 +221,7 @@ processTest()  #1-folder name 2-file list
 
     for (( pos=0; pos < length; ++pos ))
     do
+        # echo "${surveyAry[$pos]} + ${surveyAry[$pos+1]} + ${surveyAry[$pos+2]} + ${surveyAry[$pos+3]}"
         sum_sizes=$(echo "scale=7;${surveyAry[$pos]} + ${surveyAry[$pos+1]} + ${surveyAry[$pos+2]} + ${surveyAry[$pos+3]}"|bc)
         a=${NCD_A2[$pos]}
         b=${NCD_A2[$pos+1]}
@@ -206,6 +232,10 @@ processTest()  #1-folder name 2-file list
 
         f=${NCD_A4[$pos]}
 
+        # echo "$a * ( 1 - $a ) + $b * ( 1 - $b ) + $c * ( 1 - $c ) \
+        #     + $d * ( 1 - $d ) + $e * ( 1 - $e ) \
+        #     + $f * ( 1 - $f )"
+
         sum_ncds=$(echo "scale=7;$a * ( 1 - $a ) + $b * ( 1 - $b ) + $c * ( 1 - $c ) \
                                + $d * ( 1 - $d ) + $e * ( 1 - $e ) \
                                + $f * ( 1 - $f ) \
@@ -214,27 +244,35 @@ processTest()  #1-folder name 2-file list
     done
 
     # OUTPUT to file:pol
+    if [ $verbose ]; then echo "    Output to file"; fi
     echo "$HDR">>$GLOBAL_FILE
     echo "min,$TIMES">>$GLOBAL_FILE
     echo "size (sgl),$SIZES">>$GLOBAL_FILE
     echo "size (cct),$CONCAT_SIZES">>$GLOBAL_FILE
     echo "ncd,,"$NCD_str>>$GLOBAL_FILE
-    echo "size (cct_D),$CCT_SIZES_D">>$GLOBAL_FILE
-    IFS=','
-    echo "ncd2,,${NCD_A3[*]}">>"$GLOBAL_FILE"
-    echo "ncd3,,${NCD_A4[*]}">>"$GLOBAL_FILE"
-    IFS=' '
+    # IFS=','     #! if you comment out below, comment out inin the loop above
+    # echo "size (cct_3),$CCT_SIZES_3">>$GLOBAL_FILE      
+    # echo "ncd2,,${NCD_A3[*]}">>"$GLOBAL_FILE"
+    # echo "size (cct_4),$CCT_SIZES_4">>$GLOBAL_FILE
+    # echo "ncd3,,${NCD_A4[*]}">>"$GLOBAL_FILE"
+    # IFS=' '
     echo "set cpx,,"$SET_CPX>>$GLOBAL_FILE
     echo "">>$GLOBAL_FILE
+
+    if [ $verbose ]; then echo "  done"; fi
 }
 
 descend()
 {
+    if [ $roll_call ]; then echo "  descend to $1"; fi
     cd "$1"
     if [ $? -ne 0 ]
     then
         return
     fi
+
+    local above=$CURR_FOLDER
+    CURR_FOLDER=$1
 
     local FILES=$(ls)
 
@@ -248,6 +286,7 @@ descend()
     else
         processTest "$1" "$FILES"
     fi
+    CURR_FOLDER=$above
     cd ..
 }
 
