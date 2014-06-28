@@ -11,13 +11,16 @@ import java.util.Date;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.World;
+
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+
 import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -92,17 +95,12 @@ public class BlockControlBlock extends Block {
 	public static String getFacilityName(World world, int x, int y, int z) { 
 		int belowBlock = world.getBlockId(x, y-1, z);
 		String name=null;
-		if(belowBlock == blockDiamond.blockID) {
-			name = "not filled in";
-		} else if(belowBlock == coalBlock.blockID) {
+		if(belowBlock == coalBlock.blockID) {
 			name = "Partitioned Shaded";
 		} else if(belowBlock == blockGold.blockID) {
 			name = "Ideal";
 		} else if(belowBlock == blockIron.blockID) {
 			name = "Graduated";
-		} else {
-			name="not defined";
-		}
 //		} else if(belowBlock == blockEmerald.blockID) {
 //			name = "not defined";
 //		} else if(belowBlock == blockLapis.blockID) {
@@ -111,7 +109,11 @@ public class BlockControlBlock extends Block {
 //			name = "not defined";
 //		} else if(belowBlock == blockSnow.blockID) {
 //			name = "not defined";
-//		}
+//		} else if(belowBlock == blockDiamond.blockID) {
+//			name = "not filled in";
+		} else  {
+			name="not defined";
+		}
 		return "Ideal";
 	}
 	
@@ -228,7 +230,6 @@ public class BlockControlBlock extends Block {
 		setTickRandomly(false);
 
 		setupTests();
-		
 	}
 
 	/* MINECRAFT FUNCTIONS */
@@ -506,8 +507,6 @@ public class BlockControlBlock extends Block {
 			}
 		} while(!success && tcfg != null);
 		
-		//TODO take screenshot!!!!!!!!!!!!!!
-		
 		return success;
 	}
 	
@@ -541,6 +540,18 @@ public class BlockControlBlock extends Block {
 		int tempHealth, idx;
 //		int high=-1, low=1000, medn=-1, mode=-1;
 		Point3D dims = getDims();
+		
+		//TODO take screenshot.
+		try {
+//			Display.;
+
+			ScreenShotHelper.saveScreenshot(new File(currTestFolderName), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+			
+			Display.releaseContext();
+		} catch (LWJGLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		for(int xPos = x+1; xPos < x + dims.x; ++xPos) {
 			 for(int zPos = z+1; zPos < z + dims.z; ++zPos) {
