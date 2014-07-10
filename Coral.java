@@ -82,7 +82,12 @@ public class Coral {
 
     @EventHandler // used in 1.6.2
     public void postInit(FMLPostInitializationEvent event) {
-        // Stub Method
+    	boolean blue = blueCoral.hasGoodValues();
+ 	    boolean red  = redCoral.hasGoodValues();
+ 	    boolean green= greenCoral.hasGoodValues();
+    	if( !(blue && red && green) ) {
+    		System.err.println("!!!! Coral doesn't have the correct values! Stop the mission!");
+    	}
     }
 
 

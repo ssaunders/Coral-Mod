@@ -6,4 +6,13 @@ public class BlockCoralWeed extends Coral {
 		// TODO Auto-generated constructor stub
 	}
 
+//	public boolean hasGoodValues() {
+//		return maxHealth ==  &&
+//				startingHealth == &&
+//				splitPoint == &&
+//				expansionCost == &&
+//				growthFactor == &&
+//				livingCost == &&
+//				photoFactor == ;			
+//	}
 }

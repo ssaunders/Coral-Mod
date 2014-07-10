@@ -16,4 +16,13 @@ public class BlockCoralYellow extends BlockCoral {
 	    setTextureName(ModInfo.NAME+":yellowCoral");
 	}
 
+//	public boolean hasGoodValues() {
+//		return maxHealth ==  &&
+//				startingHealth == &&
+//				splitPoint == &&
+//				expansionCost == &&
+//				growthFactor == &&
+//				livingCost == &&
+//				photoFactor == ;			
+//	}
 }

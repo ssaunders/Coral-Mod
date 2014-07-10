@@ -66,16 +66,16 @@ public class BlockCoral extends Block {
 	/*** OVERRIDE THESE VARIABLES FOR NEW CORAL (! = mandatory, ? = optional) ***/
 	/** Variables are added together for a final total	//!D it would be nice to make these final
 	/*****/
-	private int   maxHealth;		 //! (22-100)
+	protected int   maxHealth;		 //! (22-100)
 	    private static HashMap<Point3D, Integer> healthMeter; //the actual health of the coral
-	private int   startingHealth;	 //! (22-100) Beginning health of new coral 
-	private int   splitPoint; 	 	 //! (22-100) Value at which coral divides (eg. creates new block).
-	private int   expansionCost;	 //! (5-15) Cost of reproducing
-	private int   livingCost;	 	 //! (1-5) How many resources a coral uses to stay alive. 
-	private int   growthFactor; 	 //! (1-5) How quickly a coral grows 
-	private int   photoFactor;	 	 //? (1-4) How well the coral grows at full light level. 
-//	private int[] soilPreference; 	 //? (1-6) Some soils are more nutritious than others. This contains how much benefit a type of soil gives the coral. 
-//	private static int[] preferenceList; //x (1-3) How much a coral likes/dislikes other types. It may dislike (-) one kind more than another, but it always likes (+) its own type
+    protected int   startingHealth;	 //! (22-100) Beginning health of new coral 
+    protected int   splitPoint; 	 	 //! (22-100) Value at which coral divides (eg. creates new block).
+    protected int   expansionCost;	 //! (5-15) Cost of reproducing
+    protected int   livingCost;	 	 //! (1-5) How many resources a coral uses to stay alive. 
+    protected int   growthFactor; 	 //! (1-5) How quickly a coral grows 
+    protected int   photoFactor;	 	 //? (1-4) How well the coral grows at full light level. 
+//	protected int[] soilPreference; 	 //? (1-6) Some soils are more nutritious than others. This contains how much benefit a type of soil gives the coral. 
+//	protected static int[] preferenceList; //x (1-3) How much a coral likes/dislikes other types. It may dislike (-) one kind more than another, but it always likes (+) its own type
 	
 	//Total possible states for all variables: 
 	//Health variables * growth * expansion * living * soil pref * photosynthesis

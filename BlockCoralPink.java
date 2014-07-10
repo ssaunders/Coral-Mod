@@ -16,4 +16,13 @@ public class BlockCoralPink extends BlockCoral {
 	    setTextureName(ModInfo.NAME+":pinkCoral");
 	}
 
+//	public boolean hasGoodValues() {
+//		return maxHealth ==  &&
+//				startingHealth == &&
+//				splitPoint == &&
+//				expansionCost == &&
+//				growthFactor == &&
+//				livingCost == &&
+//				photoFactor == ;			
+//	}
 }
