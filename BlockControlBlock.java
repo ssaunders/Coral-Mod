@@ -1,5 +1,10 @@
 package coral;
 
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,17 +15,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.World;
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-
 import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -28,7 +30,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockControlBlock extends Block {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
-	
+		
 	@SuppressWarnings("unused")
 	private void setupTests() {		/// AREA IS 1 INDEXED
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
@@ -84,6 +86,13 @@ public class BlockControlBlock extends Block {
 		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
 		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
 		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 3));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 2));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 1));
+//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+		
 
 		int totalTime = getAllTestsApxRunTime();
 		
@@ -524,6 +533,7 @@ public class BlockControlBlock extends Block {
 		
 		new File(folderName).mkdirs();
 		new File(folderName+"\\Concatenated_Tests").mkdirs();
+		new File(folderName+"\\Screenshots").mkdirs();
 		if(printMsgs) System.out.println("~~~~ Made folders for "+getCurrentTest().getTestSignature()+"_"+getCurrentTest().getUniqueId());
 	}
 	
@@ -535,23 +545,29 @@ public class BlockControlBlock extends Block {
 	
 	/** Run through the current test and record the block ids. Also records health and population in arrays. **/
 	private void survey(World world, int x, int y, int z) {
-		if(printMsgs) System.out.println("~~~~ surveyed! "+lastSurvey);
+		TestConfig testCfg = getCurrentTest();
+		if(testCfg == null) {
+			System.err.println("xxxx Could not get current test. Aborting survey.");
+			return;
+		}
+		if(printMsgs) System.out.println("~~~~ surveyed! "+testCfg.getUniqueId());
 		StringBuilder currTest = new StringBuilder();
 		int tempHealth, idx;
 //		int high=-1, low=1000, medn=-1, mode=-1;
 		Point3D dims = getDims();
 		
-		//TODO take screenshot.
-		try {
-//			Display.;
+//		try {
+////			Display.;
+//
+//			ScreenShotHelper.saveScreenshot(new File(currTestFolderName), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+//			
+//			Display.releaseContext();
+//		} catch (LWJGLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
-			ScreenShotHelper.saveScreenshot(new File(currTestFolderName), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
-			
-			Display.releaseContext();
-		} catch (LWJGLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ScreenShotter.takeScreenShot(testCfg);
 		
 		for(int xPos = x+1; xPos < x + dims.x; ++xPos) {
 			 for(int zPos = z+1; zPos < z + dims.z; ++zPos) {
@@ -585,7 +601,7 @@ public class BlockControlBlock extends Block {
 			}
 		}
 		
-		getCurrentTest().appendToCsv(population, cumHealth);
+		testCfg.appendToCsv(population, cumHealth);
 		for(int i = 0; i < population.length; ++i) {
 			population[i]= 0;
 			cumHealth[i] = 0;
@@ -593,11 +609,10 @@ public class BlockControlBlock extends Block {
 		
 		++surveyNum;
 		
-		String num = ""+getCurrentTest().getTimeElapsed();
+		String num = ""+testCfg.getTimeElapsed();
 		writeToFile(getCurrentPath(true), getSurveyFileName(getSurveyNum()), num, currTest.toString());
 		
-		if(prevSurvey.length() > 0) System.out.println(getCurrentTest().getUniqueId()+" prev: "+prevSurvey.substring(0,15));
-		System.out.println(getCurrentTest().getUniqueId());
+//		if(prevSurvey.length() > 0) System.out.println(testCfg.getUniqueId()+" prev: "+prevSurvey.substring(0,15));
 		
 		if(surveyNum > 1) {
 			writeToFile(getCurrentPath(true)+"Concatenated_Tests\\", getConcatFileName(getSurveyNum()), num, prevSurvey.append(currTest).toString());

@@ -50,6 +50,8 @@ public class Coral {
     	redCoral   = new BlockCoralRed(  CORAL_TYPE.getBlockId(CORAL_TYPE.RED));
     	blueCoral  = new BlockCoralBlue( CORAL_TYPE.getBlockId(CORAL_TYPE.BLUE));
     	greenCoral = new BlockCoralGreen(CORAL_TYPE.getBlockId(CORAL_TYPE.GREEN));
+    	
+    	
     }
 
     @EventHandler // used in 1.6.2
