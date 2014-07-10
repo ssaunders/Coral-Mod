@@ -38,7 +38,7 @@ public class BlockControlBlock extends Block {
 		int std_rpt=10;
 		
 		TestFactory.setDims(getDims());
-///*		
+/*		
 		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
 		tests.get(0).addPrefix("trash");
 /*	//do so for eq 1,2,3
@@ -68,24 +68,24 @@ public class BlockControlBlock extends Block {
 				}
 		}	//*/
 		
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
 		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
-		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
-		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
-		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
 //		tests.add(TestFactory.getScatteredMCTest(6*60, 3));
 //		tests.add(TestFactory.getScatteredMCTest(6*60, 2));
 //		tests.add(TestFactory.getScatteredMCTest(6*60, 1));

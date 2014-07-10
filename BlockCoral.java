@@ -54,14 +54,14 @@ public class BlockCoral extends Block {
 			if(limit < 1 || limit > c.length-2) {
 				limit = c.length-2;
 			}
-			return c[(int)(Math.random()*(limit))];
+			return c[rGen.nextInt(limit)];
 		}
 		public static int getNumberOfCoral() {
 			return values().length-1;
 		}
 	}
 	private static ArrayList<Material> suitableGround = new ArrayList<Material>();
-	
+	private static Random rGen = new Random();
 
 	/*** OVERRIDE THESE VARIABLES FOR NEW CORAL (! = mandatory, ? = optional) ***/
 	/** Variables are added together for a final total	//!D it would be nice to make these final
@@ -435,16 +435,16 @@ public class BlockCoral extends Block {
 
 		boolean placeable = false;
 		Point3D returnVal = null;
-		int eastWest, northSouth, groundBlock;
+		int eastWest = 0, northSouth = 0, groundBlock;
 		
 		//Randomizes the -1, 0, 1 array for random growing
-		int nth = (int)(Math.random()*4)+1; //number of times to randomize
+		int nth = rGen.nextInt(5); //number of times to randomize
 		int ew_ary[] = {-1,0,1};
 		int ns_ary[] = {0, 1,-1};
 		int tmp, pos1, pos2;
 		for(int rotate = 0; rotate < nth; rotate++) {
-			pos1 = (int)(Math.random()*2);
-			pos2 = (int)(Math.random()*2);
+			pos1 = rGen.nextInt(3);
+			pos2 = rGen.nextInt(3);			
 			
 			tmp = ew_ary[pos1];
 			ew_ary[pos1] = ew_ary[pos2];
@@ -457,8 +457,8 @@ public class BlockCoral extends Block {
 
 		//Analyze the 5-high columns surrounding the coral in a 3-block window for suitability
 		/***
-		 [ ]	 [ ]	 >[ ]		? - is this suitable ground?
-		 [ ]	>[ ]	 >[ ]		> - check for water
+		 [ ]	 [ ]	 >[ ]		> - check for water
+		 [ ]	>[ ]	 >[ ]		? - is this suitable ground?
 		>[ ] &	>[ ] &	 ?[ ] &
 		>[ ][*]	?[ ][*]	  [x][*]
 		?[ ]	 [x]	  [x]
@@ -472,7 +472,7 @@ public class BlockCoral extends Block {
 					//do nothing on middle squares
 				} else {
 					northSouth = ns_ary[zItr];
-					for(int position= -2; position < 1 && !placeable; ++position) { //y		//TODO refactor to consider world.getTopSolidOrLiquidBlock
+					for(int position= -2; position < 1 && !placeable; ++position) { //y
 						groundBlock = y+position;
 						if(canPlaceBlockAt(world, x+eastWest, groundBlock+1, z+northSouth)) {  //aboveBlock
 							placeable = true;
@@ -482,6 +482,7 @@ public class BlockCoral extends Block {
 				} //if
 			} //z loop
 		} // x loop
+		System.out.println("ew: "+eastWest+" ns: "+northSouth);
 
 		return returnVal;
 	}

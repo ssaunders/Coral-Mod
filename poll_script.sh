@@ -191,7 +191,7 @@ processTest()  #1-folder name 2-file list
     #  ADD NCD delta 2,3
     if [ $verbose ]; then echo "    NCD 2,3"; fi
     length=`expr ${#NCD_D[@]} / 2`
-    echo "ln = $length"
+    
     CCT_SIZES_3=
     CCT_SIZES_4=
     for (( pos=0; pos < length; ++pos ))

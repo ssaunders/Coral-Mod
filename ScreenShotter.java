@@ -29,20 +29,7 @@ public class ScreenShotter {
 	
 	public static void takeScreenShot() {
 		TestConfig testCfg = BlockControlBlock.getCurrentTest();
-		if(testCfg == null) {
-			System.err.println("!!!! Could not get take screenshot.");
-			return;
-		}
-		
-		BufferedImage screenShot = getRobot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-		String picName = String.format("%d_%07.2f", testCfg.getUniqueId(), testCfg.getTimeElapsed());
-		File f = new File(BlockControlBlock.getCurrentPath(true)+"Screenshots\\"+picName+".png");
-//		System.out.println("nnnn Screen size: "+Toolkit.getDefaultToolkit().getScreenSize()+" file "+f);
-		try {
-			ImageIO.write(screenShot, "PNG", f);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		takeScreenShot(testCfg);
 	}
 	
 	public static void takeScreenShot(TestConfig testCfg) {
