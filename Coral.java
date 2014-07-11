@@ -50,6 +50,8 @@ public class Coral {
     	redCoral   = new BlockCoralRed(  CORAL_TYPE.getBlockId(CORAL_TYPE.RED));
     	blueCoral  = new BlockCoralBlue( CORAL_TYPE.getBlockId(CORAL_TYPE.BLUE));
     	greenCoral = new BlockCoralGreen(CORAL_TYPE.getBlockId(CORAL_TYPE.GREEN));
+    	
+    	
     }
 
     @EventHandler // used in 1.6.2
@@ -74,14 +76,18 @@ public class Coral {
     	
     	GameRegistry.registerBlock(commandBlock, "cmdCoralBlock");
     	LanguageRegistry.addName(commandBlock, "Coral Command Block");
-    	GameRegistry.registerTileEntity(coral.TileEntityCommandBlock.class, "tecb");
 
         proxy.registerRenderers();
     }
 
     @EventHandler // used in 1.6.2
     public void postInit(FMLPostInitializationEvent event) {
-        // Stub Method
+    	boolean blue = blueCoral.hasGoodValues();
+ 	    boolean red  = redCoral.hasGoodValues();
+ 	    boolean green= greenCoral.hasGoodValues();
+    	if( !(blue && red && green) ) {
+    		System.err.println("!!!! Coral doesn't have the correct values! Stop the mission!");
+    	}
     }
 
 

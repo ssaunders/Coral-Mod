@@ -1,5 +1,10 @@
 package coral;
 
+import java.awt.AWTException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,21 +15,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import coral.BlockCoral.CORAL_TYPE;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockControlBlock extends BlockContainer {
+public class BlockControlBlock extends Block {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
-	
+		
 	@SuppressWarnings("unused")
 	private void setupTests() {		/// AREA IS 1 INDEXED
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
@@ -33,7 +39,7 @@ public class BlockControlBlock extends BlockContainer {
 		
 		TestFactory.setDims(getDims());
 ///*		
-		tests.add(TestFactory.get4GroupTest(10, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
 		tests.get(0).addPrefix("trash");
 /*	//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
@@ -62,24 +68,31 @@ public class BlockControlBlock extends BlockContainer {
 				}
 		}	//*/
 		
-//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 3));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 2));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 1));
+//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+		
 
 		int totalTime = getAllTestsApxRunTime();
 		
@@ -87,20 +100,16 @@ public class BlockControlBlock extends BlockContainer {
 		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
 		System.out.println("@@@@ Dims: "+getDims());
 	}
-	public String getFacilityName(World world, int x, int y, int z) { 
+	
+	public static String getFacilityName(World world, int x, int y, int z) { 
 		int belowBlock = world.getBlockId(x, y-1, z);
 		String name=null;
-		if(belowBlock == blockDiamond.blockID) {
-			name = "";
-		} else if(belowBlock == coalBlock.blockID) {
+		if(belowBlock == coalBlock.blockID) {
 			name = "Partitioned Shaded";
 		} else if(belowBlock == blockGold.blockID) {
 			name = "Ideal";
 		} else if(belowBlock == blockIron.blockID) {
-			name = "Scatter Shaded";
-		} else {
-			name="not defined";
-		}
+			name = "Graduated";
 //		} else if(belowBlock == blockEmerald.blockID) {
 //			name = "not defined";
 //		} else if(belowBlock == blockLapis.blockID) {
@@ -109,7 +118,11 @@ public class BlockControlBlock extends BlockContainer {
 //			name = "not defined";
 //		} else if(belowBlock == blockSnow.blockID) {
 //			name = "not defined";
-//		}
+//		} else if(belowBlock == blockDiamond.blockID) {
+//			name = "not filled in";
+		} else  {
+			name="not defined";
+		}
 		return "Ideal";
 	}
 	
@@ -123,6 +136,7 @@ public class BlockControlBlock extends BlockContainer {
 		}
 		private static void setBlockCoor(int x, int y, int z) {
 			Point3D k = new Point3D(x, y, z);
+			TestFactory.setTestFacility(getFacilityName(Minecraft.getMinecraft().theWorld, x, y, z));
 			
 			if(blockCoor != null && !blockCoor.equals(k)){				
 				System.out.println("!!!! More than one command block running: "+blockCoor);
@@ -225,7 +239,6 @@ public class BlockControlBlock extends BlockContainer {
 		setTickRandomly(false);
 
 		setupTests();
-		
 	}
 
 	/* MINECRAFT FUNCTIONS */
@@ -251,15 +264,14 @@ public class BlockControlBlock extends BlockContainer {
 					active = false;
 				}
 			} else if(world.getBlockId(x, y+1, z) == torchWood.blockID) { //Manual override for end execution
-				active = false;
 				player.addChatMessage("Stopping execution of tests. Ran "+(getRunNumber()-1)+" tests in "+getTotalTimeElapsed()+"min.");
 				if(printMsgs) System.out.println("===X Stopping execution of tests. Ran "+(getRunNumber()-1)+" tests in "+getTotalTimeElapsed()+"min.");
 				TestConfig tcfg = getCurrentTest();
 				if(tcfg != null) {
 					tcfg.endTest();
 				}
-				resetEnvironment(world, x, y, z);
 				active = false;
+				resetEnvironment(world, x, y, z);
 			} else {	//End execution warning
 				player.addChatMessage(
 					"Running test "+getCurrentTestNumber()+". Time remaining: "+getCurrentTest().getTimeRemaining()
@@ -376,8 +388,8 @@ public class BlockControlBlock extends BlockContainer {
 					return super.canPlaceBlockAt(world, x, y, z);
 				} else { System.out.println("!!!! Block Coordinates were not attached to a command block"); }
 			} else {
-				messagePlayers(world, "A coral command block already exists. To move the block, place on top of a torch.");
-				System.out.println("A coral command block already exists. To move the block, place on top of a torch.");
+				messagePlayers(world, "A coral command block already exists. To move the block, place on top of a red torch.");
+				System.out.println("A coral command block already exists. To move the block, place on top of a red torch.");
 				return false;
 			}
 		}
@@ -433,7 +445,7 @@ public class BlockControlBlock extends BlockContainer {
 	private static ArrayList<TestConfig> tests = new ArrayList<TestConfig>();
 	/** Returns the test config of the current running test. Returns null if no tests are running */
     public static TestConfig getCurrentTest() {
-    	if(testNumber < getTotalNumTests() && active) {
+    	if(testNumber <= getTotalNumTests() - 1 && active) {
     		return tests.get(testNumber);
     	} else {
     		return null;
@@ -504,8 +516,6 @@ public class BlockControlBlock extends BlockContainer {
 			}
 		} while(!success && tcfg != null);
 		
-		//TODO take screenshot!!!!!!!!!!!!!!
-		
 		return success;
 	}
 	
@@ -523,6 +533,7 @@ public class BlockControlBlock extends BlockContainer {
 		
 		new File(folderName).mkdirs();
 		new File(folderName+"\\Concatenated_Tests").mkdirs();
+		new File(folderName+"\\Screenshots").mkdirs();
 		if(printMsgs) System.out.println("~~~~ Made folders for "+getCurrentTest().getTestSignature()+"_"+getCurrentTest().getUniqueId());
 	}
 	
@@ -534,16 +545,34 @@ public class BlockControlBlock extends BlockContainer {
 	
 	/** Run through the current test and record the block ids. Also records health and population in arrays. **/
 	private void survey(World world, int x, int y, int z) {
-		if(printMsgs) System.out.println("~~~~ surveyed! "+lastSurvey);
+		TestConfig testCfg = getCurrentTest();
+		if(testCfg == null) {
+			System.err.println("xxxx Could not get current test. Aborting survey.");
+			return;
+		}
+		if(printMsgs) System.out.println("~~~~ surveyed! "+testCfg.getUniqueId());
 		StringBuilder currTest = new StringBuilder();
 		int tempHealth, idx;
 //		int high=-1, low=1000, medn=-1, mode=-1;
 		Point3D dims = getDims();
 		
-		for(int xPos = x+1; xPos < x + dimensions.x; ++xPos) {
-			 for(int zPos = z+1; zPos < z + dimensions.z; ++zPos) {
+//		try {
+////			Display.;
+//
+//			ScreenShotHelper.saveScreenshot(new File(currTestFolderName), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
+//			
+//			Display.releaseContext();
+//		} catch (LWJGLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		ScreenShotter.takeScreenShot(testCfg);
+		
+		for(int xPos = x+1; xPos < x + dims.x; ++xPos) {
+			 for(int zPos = z+1; zPos < z + dims.z; ++zPos) {
 				//3-scan
-				for(int yPos = y-1; yPos >= y - dimensions.y; --yPos) {
+				for(int yPos = y-1; yPos >= y - dims.y; --yPos) {
 					int bId = world.getBlockId(xPos, yPos, zPos);
 					if(Coral.isCoral(bId)){
 						tempHealth = Coral.coralBlock.getHealth(xPos, yPos, zPos);
@@ -572,7 +601,7 @@ public class BlockControlBlock extends BlockContainer {
 			}
 		}
 		
-		getCurrentTest().appendToCsv(population, cumHealth);
+		testCfg.appendToCsv(population, cumHealth);
 		for(int i = 0; i < population.length; ++i) {
 			population[i]= 0;
 			cumHealth[i] = 0;
@@ -580,11 +609,10 @@ public class BlockControlBlock extends BlockContainer {
 		
 		++surveyNum;
 		
-		String num = ""+getCurrentTest().getTimeElapsed();
+		String num = ""+testCfg.getTimeElapsed();
 		writeToFile(getCurrentPath(true), getSurveyFileName(getSurveyNum()), num, currTest.toString());
 		
-		if(prevSurvey.length() > 0) System.out.println(getCurrentTest().getUniqueId()+" prev: "+prevSurvey.substring(0,15));
-		System.out.println(getCurrentTest().getUniqueId());
+//		if(prevSurvey.length() > 0) System.out.println(testCfg.getUniqueId()+" prev: "+prevSurvey.substring(0,15));
 		
 		if(surveyNum > 1) {
 			writeToFile(getCurrentPath(true)+"Concatenated_Tests\\", getConcatFileName(getSurveyNum()), num, prevSurvey.append(currTest).toString());
@@ -605,8 +633,8 @@ public class BlockControlBlock extends BlockContainer {
 			return;
 		}
 						
-		for(int xIncr = 1; xIncr < dimensions.x+1; ++xIncr) {
-			 for(int zIncr = 1; zIncr < dimensions.z+1; ++zIncr) {
+		for(int xIncr = 1; xIncr < dims.x+1; ++xIncr) {
+			 for(int zIncr = 1; zIncr < dims.z+1; ++zIncr) {
 			 	yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
 //					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
@@ -638,25 +666,6 @@ public class BlockControlBlock extends BlockContainer {
 		return name.toString();
 	}
 	
-	//? time between surveys, testing facility, spread (is it even interesting?)
-	
-	/* What questions are you trying to answer?
-	 ** Notes ON THE FACILITY **
-	 *  Experimental/Indep variables
-	 *    Complexity of environment (slope, hills, soils, height, etc)
-	 *    Initial composition of species
-	 *    Parameters controlling species
-	 *   
-	 ** Characterization of corals. ** 
-	 *  Within a simple environment, how do the parameters affect complexity?
-	 *  Multiple tests with a single coral, changing parameters in small way, 
-	 *  to measure their effect on growth. (measuring growth rate in different environments)
-	 *  
-	 *  ^ initial experiments to a) decide corals (make graphs) b) test it works
-	 *  
-	 *  next time have experiment results (50^3) x 3 facilities
-	 */
-	
 	/** Writes the given String to a txt file using the given name. **/
 	public static void writeToFile(String filePath, String fileName, String header, String data) {
 		writeToFile(filePath, fileName, header, data, "txt");
@@ -675,19 +684,19 @@ public class BlockControlBlock extends BlockContainer {
 			e.printStackTrace();
 		}
 		
-		if(printMsgs) System.out.println("<<<< written to file! "+fileName+"."+ext+" "+header);
+//		if(printMsgs) System.out.println("<<<< written to file! "+fileName+"."+ext+" "+header);
 	}
 	
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		TileEntityCommandBlock tecb = new TileEntityCommandBlock();
-		return tecb;
-	}
-	
-	@Override
-	public boolean hasTileEntity(int metadata) {
-		return true;
-	}
+//	@Override
+//	public TileEntity createNewTileEntity(World world) {
+//		TileEntityControlBlock tecb = new TileEntityControlBlock();
+//		return tecb;
+//	}
+//	
+//	@Override
+//	public boolean hasTileEntity(int metadata) {
+//		return true;
+//	}
 	
 	public void messagePlayers(World world, String msg) {
 		if(active) {

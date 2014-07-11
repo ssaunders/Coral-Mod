@@ -25,5 +25,15 @@ public class BlockCoralRed extends BlockCoral {
 	public void showBestAndWorst() {
 		super.showBestAndWorst();
 	}
+	
+	public boolean hasGoodValues() {
+		return maxHealth ==  70 &&
+				startingHealth == 30 &&
+				splitPoint == 60 &&
+				expansionCost == 10 &&
+				growthFactor == 3 &&
+				livingCost == 3 &&
+				photoFactor == 3;			
+	}
 
 }
