@@ -1,10 +1,5 @@
 package coral;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,8 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -104,26 +97,24 @@ public class BlockControlBlock extends Block {
 	public static String getFacilityName(World world, int x, int y, int z) { 
 		int belowBlock = world.getBlockId(x, y-1, z);
 		String name=null;
-		if(belowBlock == coalBlock.blockID) {
-			name = "Partitioned Shaded";
-		} else if(belowBlock == blockGold.blockID) {
+		if(belowBlock == blockGold.blockID) {
 			name = "Ideal";
 		} else if(belowBlock == blockIron.blockID) {
 			name = "Graduated";
 //		} else if(belowBlock == blockEmerald.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockLapis.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockRedstone.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockSnow.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockDiamond.blockID) {
-//			name = "not filled in";
+//			name = "undefined";
 		} else  {
 			name="not defined";
 		}
-		return "Ideal";
+		return name;
 	}
 	
 	/* GENERAL TEST INFORMATION */
@@ -233,8 +224,8 @@ public class BlockControlBlock extends Block {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
-	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
+	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+//	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);
 
