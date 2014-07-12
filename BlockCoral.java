@@ -269,8 +269,6 @@ public class BlockCoral extends Block {
 		if(healthMeter == null) {			
 			healthMeter = new HashMap<Point3D, Integer>(50 * 50, .9f);
 		}
-		
-		showBestAndWorst();
 	}
 
 	private int supportsNumOfEq;
@@ -458,7 +456,7 @@ public class BlockCoral extends Block {
 
 		boolean placeable = false;
 		Point3D returnVal = null;
-		int eastWest = 0, northSouth = 0, groundBlock;
+		int eastWest, northSouth, groundBlock;
 		
 		//Randomizes the -1, 0, 1 array for random growing
 		int nth = rGen.nextInt(5); //number of times to randomize
@@ -505,7 +503,6 @@ public class BlockCoral extends Block {
 				} //if
 			} //z loop
 		} // x loop
-		System.out.println("ew: "+eastWest+" ns: "+northSouth);
 
 		return returnVal;
 	}
@@ -631,9 +628,9 @@ public class BlockCoral extends Block {
 		}
 		
 		if(friends + enemies > threshold) {
-			ngbrVal = (friends / 2 ) -enemies;
+			ngbrVal = -2 - enemies;
 		} else {
-			ngbrVal = (-enemies + friends);			
+			ngbrVal = friends - enemies;			
 		}
 		
 		lightLvl = (int)Math.ceil(lightLvl / 4.);

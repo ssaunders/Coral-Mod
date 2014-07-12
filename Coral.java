@@ -88,6 +88,16 @@ public class Coral {
     	if( !(blue && red && green) ) {
     		System.err.println("!!!! Coral doesn't have the correct values! Stop the mission!");
     	}
+    	
+//    	pinkCoral.showBestAndWorst();
+    	redCoral.showBestAndWorst();
+//    	orangeCoral.showBestAndWorst();
+//    	yellowCoral.showBestAndWorst();
+    	greenCoral.showBestAndWorst();
+    	blueCoral.showBestAndWorst();
+//    	deepCoral.showBestAndWorst();
+//    	weedCoral.showBestAndWorst();
+//    	airCoral.showBestAndWorst();
     }
 
 

@@ -104,22 +104,20 @@ public class BlockControlBlock extends Block {
 	public static String getFacilityName(World world, int x, int y, int z) { 
 		int belowBlock = world.getBlockId(x, y-1, z);
 		String name=null;
-		if(belowBlock == coalBlock.blockID) {
-			name = "Partitioned Shaded";
-		} else if(belowBlock == blockGold.blockID) {
+		if(belowBlock == blockGold.blockID) {
 			name = "Ideal";
 		} else if(belowBlock == blockIron.blockID) {
 			name = "Graduated";
 //		} else if(belowBlock == blockEmerald.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockLapis.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockRedstone.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockSnow.blockID) {
-//			name = "not defined";
+//			name = "undefined";
 //		} else if(belowBlock == blockDiamond.blockID) {
-//			name = "not filled in";
+//			name = "undefined";
 		} else  {
 			name="not defined";
 		}
@@ -233,8 +231,8 @@ public class BlockControlBlock extends Block {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
-	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
+	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+//	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);
 

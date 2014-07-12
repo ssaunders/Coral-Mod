@@ -1,8 +1,5 @@
 package coral;
 
-import java.awt.Dimension;
-
-import net.minecraft.util.Facing;
 import coral.BlockCoral.CORAL_TYPE;
 
 public class TestFactory {
@@ -66,11 +63,12 @@ public class TestFactory {
 		t.setFacility(facility);
 		int kind = 0, ln = types.length;
 		
-		int oneGreen=1;
-		int twoRed = 1;
+//		int oneGreen=1;
+//		int twoRed = 1;
 
 		int spacer = 10;
-		int stepZ, stepX,a=0,z=0;
+		int stepZ, stepX;
+		//int a=0,z=0;
 		//creates a grid of coral
 		for(stepX=1; stepX < dims.x/spacer; ++stepX) {
 			for(stepZ=1; stepZ < dims.z/spacer; ++stepZ) {

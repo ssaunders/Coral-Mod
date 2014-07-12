@@ -3,7 +3,7 @@ package coral;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 
-//THE PICKY EATER
+//THE Slow Grower
 public class BlockCoralRed extends BlockCoral {
 	public BlockCoralRed(int id) {
 		super(id, CORAL_TYPE.RED);
