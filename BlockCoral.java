@@ -513,19 +513,60 @@ public class BlockCoral extends Block {
 	
 	// // GROWTH EQUATIONS // //
 	public void showBestAndWorst(){
-		int bestGrowth = 5,
-			worstGrowth= 1,
-			bestLight  = 4,
-			worstLight  = 1,
-			threshold = 4,
-			bestNumNbrs = threshold-1,
-			worstNumNbrs= 8,
-			bestLivCost = 1,
-			worstLivCost= 5;
+		int threshold = 4,
+			worstNumNbrs= 8;
 		CoralInfo w = new CoralInfo();
-		w.type = this.type;
+		w.type = CORAL_TYPE.RANDOM;
 		CoralInfo[] worstNeighbors= {w,w,w,w,w,w,w,w};
 			
+		CoralInfo b;
+		CoralInfo[] bestNeighbors = new CoralInfo[8];
+		for(int i=7; i>=0; --i) {
+			b = new CoralInfo();
+			b.type = this.type;
+			bestNeighbors[i] = b;
+		}
+		int worstEQ0 = equation0(worstNeighbors, worstNumNbrs, 0) - livingCost;
+		int worstEQ1 = equation1(worstNeighbors, worstNumNbrs, threshold, 0) - livingCost;
+		int worstEQ2 = equation1(worstNeighbors, worstNumNbrs, threshold+1, 0) - livingCost;
+		int worstEQ3 = equation1(worstNeighbors, worstNumNbrs, threshold+2, 0) - livingCost;
+		int worstEQ4 = equation4(worstNeighbors, worstNumNbrs, threshold, 0) - livingCost;
+		int worstEQ5 = equation4(worstNeighbors, worstNumNbrs, threshold+1, 0) - livingCost;
+		int worstEQ6 = equation4(worstNeighbors, worstNumNbrs, threshold+2, 0) - livingCost;
+		
+		int bestEQ0 = equation0(bestNeighbors, 8, 15) - livingCost;
+		int bestEQ1 = equation1(bestNeighbors, threshold-1, threshold, 15) - livingCost;
+		int bestEQ2 = equation1(bestNeighbors, threshold, threshold+1, 15) - livingCost;
+		int bestEQ3 = equation1(bestNeighbors, threshold+1, threshold+2, 15) - livingCost;
+		int bestEQ4 = equation4(bestNeighbors, threshold-1, threshold, 15) - livingCost;
+		int bestEQ5 = equation4(bestNeighbors, threshold, threshold+1, 15) - livingCost;
+		int bestEQ6 = equation4(bestNeighbors, threshold+1, threshold+2, 15) - livingCost;
+		
+		System.out.println(
+			"\n\tWorst\tBest\tfor "+this.type+
+		  "\nEq0   "+worstEQ0+"\t "+bestEQ0+"\n"+
+			"Eq1   "+worstEQ1+"\t "+bestEQ1+"\n"+
+			"Eq2   "+worstEQ2+"\t "+bestEQ2+"\n"+
+			"Eq3   "+worstEQ3+"\t "+bestEQ3+"\n"+
+			"Eq4   "+worstEQ4+"\t "+bestEQ4+"\n"+
+			"Eq5   "+worstEQ5+"\t "+bestEQ5+"\n"+
+			"Eq6   "+worstEQ6+"\t "+bestEQ6+"\n\n"
+		);
+	}
+	public void genericShowBestAndWorst(){
+		int bestGrowth = 5,
+				worstGrowth= 1,
+				bestLight  = 4,
+				worstLight  = 1,
+				threshold = 4,
+				bestNumNbrs = threshold-1,
+				worstNumNbrs= 8,
+				bestLivCost = 1,
+				worstLivCost= 5;
+		CoralInfo w = new CoralInfo();
+		w.type = CORAL_TYPE.RANDOM;
+		CoralInfo[] worstNeighbors= {w,w,w,w,w,w,w,w};
+		
 		CoralInfo b;
 		CoralInfo[] bestNeighbors = new CoralInfo[8];
 		for(int i=7; i>=0; --i) {
@@ -546,12 +587,12 @@ public class BlockCoral extends Block {
 		int bestEQ3 = equation1(bestNeighbors, threshold+1, threshold+2, 15) - bestLivCost;
 		
 		System.out.println(
-			"\n\tWorst\tBest\tfor "+this.type+
-		  "\nEq0   "+worstEQ0+"\t "+bestEQ0+"\n"+
-			"Eq1   "+worstEQ1+"\t "+bestEQ1+"\n"+
-			"Eq2   "+worstEQ2+"\t "+bestEQ2+"\n"+
-			"Eq3   "+worstEQ3+"\t "+bestEQ3+"\n\n"
-		);
+				"\n\tWorst\tBest\tfor "+this.type+
+				"\nEq0   "+worstEQ0+"\t "+bestEQ0+"\n"+
+				"Eq1   "+worstEQ1+"\t "+bestEQ1+"\n"+
+				"Eq2   "+worstEQ2+"\t "+bestEQ2+"\n"+
+				"Eq3   "+worstEQ3+"\t "+bestEQ3+"\n\n"
+				);
 	}
 	
 	public static int numEqs = 4;	//MAKE SURE TO UPDATE THIS NUMBER

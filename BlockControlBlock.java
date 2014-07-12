@@ -554,7 +554,6 @@ public class BlockControlBlock extends Block {
 //			
 //			Display.releaseContext();
 //		} catch (LWJGLException e) {
-//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 
