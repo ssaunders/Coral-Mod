@@ -19,8 +19,8 @@ public class BlockCoralAir extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("airCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":airCoral");
-//	    setTextureName(ModInfo.NAME+":airCoral");
+//	    func_111022_d(ModInfo.NAME+":airCoral");
+	    setTextureName(ModInfo.NAME+":airCoral");
 	}
 
 	public void showBestAndWorst() {

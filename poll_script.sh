@@ -274,7 +274,7 @@ descend()
     local above=$CURR_FOLDER
     CURR_FOLDER=$1
 
-    local FILES=$(ls)
+    local FILES=$(ls | grep ^2014)
 
     if [ "$(ls | grep "Concat")" = "" ]
     then
@@ -303,8 +303,16 @@ echo "">$GLOBAL_FILE
 
 t1=$(date +"%s")
 echo ""
+num_tests=$(ls -1 | grep ^2014 | wc -l)
 
 echo "BEGINNING PROCESSING"
+if [ "$(ls | grep "Concat")" = "" ]
+then
+    echo $num_tests" tests found. Processing will take appx "$(echo "scale=2;$num_tests * 1.8"|bc)" min"
+else 
+    echo "1 test found. Processing will take appx 1.8 min"
+done
+
 descend .
 t2=$(date +"%s")
 diff=$(($t2-$t1))
@@ -324,3 +332,11 @@ echo "FINISHED PROCESSING ($(($diff / 60))m $(($diff % 60))s)"
 # echo ${Q//PAT} ;# removes all of PAT from individuals in Q
 # echo ${Q%%.txt}   ;#  BACK http://tldp.org/LDP/abs/html/string-manipulation.html
 # echo ${Q$$.txt}   ;#  FRONT
+
+# PROGRESS BAR TYPE THING
+# for pc in {1..100}
+# do
+#     echo -ne "$pc%\033[0K\r"
+#     usleep 100000
+# done
+# echo

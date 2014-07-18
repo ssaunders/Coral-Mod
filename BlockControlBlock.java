@@ -24,7 +24,6 @@ public class BlockControlBlock extends Block {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 		
-	@SuppressWarnings("unused")
 	private void setupTests() {		/// AREA IS 1 INDEXED
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
 		int std_length = 45;
@@ -79,12 +78,13 @@ public class BlockControlBlock extends Block {
 		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
 		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
 		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 3));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 2));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 1));
-//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 6));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 5));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 4));
+//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(6*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
 		
 
 		int totalTime = getAllTestsApxRunTime();
@@ -224,8 +224,8 @@ public class BlockControlBlock extends Block {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
-//	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
+//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);
 
@@ -627,7 +627,7 @@ public class BlockControlBlock extends Block {
 			 for(int zIncr = 1; zIncr < dims.z+1; ++zIncr) {
 			 	yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
-//					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
+//					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));
 					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
 				}
 			 }
