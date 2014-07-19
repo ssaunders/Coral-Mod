@@ -23,8 +23,8 @@ public class BlockCoralGreen extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("greenCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":greenCoral");
-//	    setTextureName(ModInfo.NAME+":greenCoral");
+//	    func_111022_d(ModInfo.NAME+":greenCoral");
+	    setTextureName(ModInfo.NAME+":greenCoral");
     }
 	
 	public boolean hasGoodValues() {

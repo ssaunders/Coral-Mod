@@ -19,8 +19,8 @@ public class BlockCoralOrange extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("orangeCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":orangeCoral");
-//	    setTextureName(ModInfo.NAME+":orangeCoral");
+//	    func_111022_d(ModInfo.NAME+":orangeCoral");
+	    setTextureName(ModInfo.NAME+":orangeCoral");
 	}
 	public void showBestAndWorst() {
 		super.showBestAndWorst();
