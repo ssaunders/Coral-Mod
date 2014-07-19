@@ -24,7 +24,6 @@ public class BlockControlBlock extends Block {
 	private static boolean printMsgs = true;
 	public static boolean showMessages() { return printMsgs; }
 		
-	@SuppressWarnings("unused")
 	private void setupTests() {		/// AREA IS 1 INDEXED
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
 		int std_length = 45;
@@ -32,7 +31,7 @@ public class BlockControlBlock extends Block {
 		
 		TestFactory.setDims(getDims());
 ///*		
-		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(10, 1, CORAL_TYPE.RED));
 		tests.get(0).addPrefix("trash");
 /*	//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
@@ -79,12 +78,13 @@ public class BlockControlBlock extends Block {
 		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
 		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
 		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 3));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 2));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 1));
-//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get2CoralTest(4*60, 2, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 6));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 5));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 4));
+//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(6*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
 		
 
 		int totalTime = getAllTestsApxRunTime();
@@ -118,8 +118,8 @@ public class BlockControlBlock extends Block {
 	}
 	
 	/* GENERAL TEST INFORMATION */
-//	private static final Point3D TEST_DIMS = new Point3D(50,0,50);	/*	//50x50		
-	private static final Point3D TEST_DIMS = new Point3D(80,20,80);		//82x82		*/
+	private static final Point3D TEST_DIMS = new Point3D(50,20,50);	/*	//50x50		
+//	private static final Point3D TEST_DIMS = new Point3D(80,20,80);		//82x82		*/
 	private static Point3D blockCoor = null;
 	private static ArrayList<Point3D> otherBlockCoor=new ArrayList<Point3D>();
 		private static Point3D getBlockCoor() {
@@ -224,8 +224,8 @@ public class BlockControlBlock extends Block {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
-//	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
+//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
+	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);
 
@@ -276,7 +276,13 @@ public class BlockControlBlock extends Block {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
-		if(active) {	
+		boolean showDir = false;
+		if (world.getBlockId(x, y+1, z) == torchRedstoneActive.blockID) {
+			showDir = true;
+			x = x+1;
+			z = z+1;
+		}
+		if(active || showDir) {	
 	        double d0 = 0.0625D;
 	        for (int l = 0; l < 6; ++l)
 	        {
@@ -544,6 +550,7 @@ public class BlockControlBlock extends Block {
 		if(printMsgs) System.out.println("~~~~ surveyed! "+testCfg.getUniqueId());
 		StringBuilder currTest = new StringBuilder();
 		int tempHealth, idx;
+		int min=1000, max=-1;
 //		int high=-1, low=1000, medn=-1, mode=-1;
 		Point3D dims = getDims();
 		
@@ -558,18 +565,24 @@ public class BlockControlBlock extends Block {
 //		}
 
 		ScreenShotter.takeScreenShot(testCfg);
-		
+		int bId;
 		for(int xPos = x+1; xPos < x + dims.x; ++xPos) {
 			 for(int zPos = z+1; zPos < z + dims.z; ++zPos) {
 				//3-scan
 				for(int yPos = y-1; yPos >= y - dims.y; --yPos) {
-					int bId = world.getBlockId(xPos, yPos, zPos);
+					bId = world.getBlockId(xPos, yPos, zPos);
 					if(Coral.isCoral(bId)){
 						tempHealth = Coral.coralBlock.getHealth(xPos, yPos, zPos);
 						if(tempHealth > 0) {
 							idx = CORAL_TYPE.toIndex(bId);
 							population[idx]++;
 							cumHealth[idx] += tempHealth;
+							
+							if(tempHealth < min) {
+								min = tempHealth;
+							} else if(tempHealth > max) {
+								max = tempHealth;
+							}
 						}
 					}
 					currTest.append(String.format("%03d", bId));
@@ -591,7 +604,7 @@ public class BlockControlBlock extends Block {
 			}
 		}
 		
-		testCfg.appendToCsv(population, cumHealth);
+		testCfg.appendToCsv(population, cumHealth, min, max);
 		for(int i = 0; i < population.length; ++i) {
 			population[i]= 0;
 			cumHealth[i] = 0;
@@ -627,7 +640,7 @@ public class BlockControlBlock extends Block {
 			 for(int zIncr = 1; zIncr < dims.z+1; ++zIncr) {
 			 	yPos= world.getTopSolidOrLiquidBlock(xIncr+x, zIncr+z);
 				if(Coral.isCoral(world.getBlockId(xIncr+x, yPos, zIncr+z))){
-//					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));	//!D
+//					if(printMsgs) System.out.println("killed one coral "+new Point3D(x+xIncr, yPos, z+zIncr));
 					Coral.coralBlock.removeCoral(world, x+xIncr, yPos, z+zIncr);
 				}
 			 }

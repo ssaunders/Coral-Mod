@@ -88,7 +88,7 @@ public class TestConfig {
 		}
 
 	private StringBuilder csv;
-		public void appendToCsv(int[] pop, int[] cumHealth) {
+		public void appendToCsv(int[] pop, int[] cumHealth, int min, int max) {
 			StringBuffer line = new StringBuffer(""+getTimeElapsed());
 			line.append(',');
 			String pStr = ArrayUtils.toString(pop);
@@ -96,7 +96,7 @@ public class TestConfig {
 			line.append(", ,");
 			String chStr = ArrayUtils.toString(cumHealth);
 			line.append(chStr.substring(1, chStr.length()-1));
-			line.append(",*\n");
+			line.append(",*,"+min+","+max+"\n");
 			csv.append(line);
 		}
     
@@ -165,7 +165,7 @@ public class TestConfig {
 		
 		setStartTime();
 		csv = new StringBuilder(new SimpleDateFormat("hh:mm").format(new Date(getStartTime()))+
-				",Population,,,,,,,,,,Cumulative Health\nTime,"+CORAL_TYPE.toCsv()+", ,"+CORAL_TYPE.toCsv()+"\n");
+				",Population,,,,,,,,,,Cumulative Health,,,,,,,,,Min Health, MaxHealth\nTime,"+CORAL_TYPE.toCsv()+", ,"+CORAL_TYPE.toCsv()+"\n");
 		for(int i = 0; i < size; ++i) {
 			coralSeed = seeds.get(i);
 			if(coralSeed.x <= dimensions.x && coralSeed.z <= dimensions.z
