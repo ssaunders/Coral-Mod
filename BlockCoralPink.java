@@ -19,7 +19,6 @@ public class BlockCoralPink extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("pinkCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-//	    func_111022_d(ModInfo.NAME+":pinkCoral");
 	    setTextureName(ModInfo.NAME+":pinkCoral");
 	}
 	public void showBestAndWorst() {

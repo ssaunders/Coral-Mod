@@ -25,9 +25,9 @@ public class BlockControlBlock extends Block {
 	public static boolean showMessages() { return printMsgs; }
 		
 	private void setupTests() {		/// AREA IS 1 INDEXED
-		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
-		int std_length = 45;
-		int std_rpt=10;
+//		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
+//		int std_length = 45;
+//		int std_rpt=10;
 		
 		TestFactory.setDims(getDims());
 ///*		
@@ -224,7 +224,6 @@ public class BlockControlBlock extends Block {
 		
 	    setUnlocalizedName("cmdCoralBlock");
 	    setCreativeTab(CreativeTabs.tabBlock);
-//	    func_111022_d(ModInfo.NAME+":cmdCoralBlock");
 	    setTextureName(ModInfo.NAME+":cmdCoralBlock");
 	    
 		setTickRandomly(false);

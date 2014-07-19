@@ -19,7 +19,6 @@ public class BlockCoralDeep extends BlockCoral {
 	    setStepSound(Block.soundStoneFootstep);
 	    setUnlocalizedName("deepCoral");
 	    setCreativeTab(CreativeTabs.tabBlock);
-//	    func_111022_d(ModInfo.NAME+":deepCoral");
 	    setTextureName(ModInfo.NAME+":deepCoral");
 	}
 	public void showBestAndWorst() {
