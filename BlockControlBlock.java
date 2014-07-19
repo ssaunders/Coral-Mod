@@ -31,7 +31,7 @@ public class BlockControlBlock extends Block {
 		
 		TestFactory.setDims(getDims());
 ///*		
-		tests.add(TestFactory.get4GroupTest(10, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
 		tests.get(0).addPrefix("trash");
 /*	//do so for eq 1,2,3
 		for(int eq = 3; eq > 0; --eq) {
@@ -118,8 +118,8 @@ public class BlockControlBlock extends Block {
 	}
 	
 	/* GENERAL TEST INFORMATION */
-	private static final Point3D TEST_DIMS = new Point3D(50,20,50);	/*	//50x50		
-//	private static final Point3D TEST_DIMS = new Point3D(80,20,80);		//82x82		*/
+//	private static final Point3D TEST_DIMS = new Point3D(50,20,50);	/*	//50x50		
+	private static final Point3D TEST_DIMS = new Point3D(80,20,80);		//82x82		*/
 	private static Point3D blockCoor = null;
 	private static ArrayList<Point3D> otherBlockCoor=new ArrayList<Point3D>();
 		private static Point3D getBlockCoor() {
