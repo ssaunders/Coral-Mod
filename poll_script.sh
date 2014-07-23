@@ -311,7 +311,7 @@ then
     echo $num_tests" tests found. Processing will take appx "$(echo "scale=2;$num_tests * 1.8"|bc)" min"
 else 
     echo "1 test found. Processing will take appx 1.8 min"
-done
+fi
 
 descend .
 t2=$(date +"%s")
