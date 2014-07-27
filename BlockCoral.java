@@ -1,18 +1,14 @@
 package coral;
 
-import java.awt.Point;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 @SuppressWarnings("unused")
 public class BlockCoral extends Block {
@@ -30,11 +26,10 @@ public class BlockCoral extends Block {
 			return blockId - OFFSET;
 		}
 		/** Returns the coral name associated with the block id */
-		public static String getCoralName(int blockId) {
-			if(blockId-OFFSET > 0 && blockId-OFFSET < values().length)
-				return values()[blockId-OFFSET].name();
-			else if (blockId >= 0 && blockId < values().length) //based on index
-				return values()[blockId].name();
+		public static String getCoralName(int index) {
+			if(index >= OFFSET) index-=OFFSET;
+			if (index >= 0 && index < values().length) //based on index
+				return values()[index].name();
 			else
 				return null;
 		}
@@ -295,8 +290,8 @@ public class BlockCoral extends Block {
 			if(val == null) {	
 				System.out.println("No health record for ("+x+","+y+","+z+")");
 				return;
-//			} else if(printMsgs) {
-//				System.out.println(CORAL_TYPE.getCoralName(this.blockID)+" Coral at ("+ x+", "+y+", "+z+") Num Nghbr: "+numNeighbors+" health: "+ val.intValue());
+//			} else {
+//				System.out.println(CORAL_TYPE.getCoralName(this.blockID)+" Coral at ("+ x+", "+y+", "+z+") Num Nghbr: "+numNeighbors+" nghbrs: "+ArrayUtils.toString(neighbors, " ")+" health: "+ val.intValue());
 			}
 		}
 		
@@ -326,8 +321,6 @@ public class BlockCoral extends Block {
 				System.out.println("!!!! Growth equation "+t.getGrowthEq()+" does not exist.");
 				break;
 		}
-		
-		supportsNumOfEq = 4;
 		
 		grow(healthModifier, x, y, z);
 		
