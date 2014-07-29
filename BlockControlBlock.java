@@ -26,68 +26,41 @@ public class BlockControlBlock extends Block {
 		
 	private void setupTests() {		/// AREA IS 1 INDEXED
 //		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
-//		int std_length = 45;
-//		int std_rpt=10;
+		int stdTime = 6;
 		
 		TestFactory.setDims(getDims());
 ///*		
-		tests.add(TestFactory.get4GroupTest(1, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.getEmptyTest(1));
 		tests.get(0).addPrefix("trash");
-/*	//do so for eq 1,2,3
-		for(int eq = 3; eq > 0; --eq) {
-			for(int i = types.length-1; i >= 0; --i) {
-				for(int rpt = 2; rpt > 0; --rpt) {
-					tests.add(TestFactory.get4GroupTest(std_length, eq, types[i]));
-				}
-			}
-			
-//				for(int i = types.length-2; i >= 0; --i) {
-//					for(int rpt = 2; rpt > 0; --rpt) {					
-//						tests.add(TestFactory.getOneDirTest(std_length, eq, types[i]));
-//					}
-//				}
-				
-				for(int i = types.length-2; i >= 0; --i) {
-					for(int rpt = 1; rpt > 0; --rpt) {					
-						tests.add(TestFactory.getScatteredTest(std_length+20, eq, types[i])); 
-					}
-				}
-				
-				for(int i = types.length-1; i >= 0; --i) {
-					for(int rpt = 2; rpt > 0; --rpt) {					
-						tests.add(TestFactory.getFullTest(std_length, eq, types[i]));
-					}
-				}
-		}	//*/
 		
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.RED));
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get4GroupTest(6*60, 3, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.get4GroupTest(6*60, 2, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.get4GroupTest(6*60, 1, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.RED));
-		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.RED));
-		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.RED));
-		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.getFullTest(6*60, 3, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getFullTest(6*60, 2, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getFullTest(6*60, 1, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 6));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 5));
-//		tests.add(TestFactory.getScatteredMCTest(6*60, 4));
-		tests.add(TestFactory.get2CoralTest(6*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-		tests.add(TestFactory.get2CoralTest(6*60, 4, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
-		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
-		tests.add(TestFactory.get2CoralTest(6*60, 4, CORAL_TYPE.GREEN, CORAL_TYPE.RED));		
-//		tests.add(TestFactory.get2CoralTest(6*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.RED));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getScatteredMCTest(6*60, 9));
+		tests.add(TestFactory.getScatteredMCTest(6*60, 8));
+		tests.add(TestFactory.getScatteredMCTest(6*60, 7));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+////		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.GREEN, CORAL_TYPE.RED));		
+////		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
 		
 
 		int totalTime = getAllTestsApxRunTime();

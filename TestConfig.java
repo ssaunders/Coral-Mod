@@ -183,7 +183,7 @@ public class TestConfig {
 				addError(error);
 			}
 		}
-		if(numCoralPlaced == 0) {
+		if(numCoralPlaced == 0 && size != 0) {
 			String error = "^ No coral placed. Skipping test. Test "+BlockControlBlock.getCurrentTestNumber();
 			System.out.println(error);
 			addError(error);

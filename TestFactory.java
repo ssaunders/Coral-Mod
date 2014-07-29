@@ -157,4 +157,8 @@ public class TestFactory {
 		
 		return t;
 	}
+	
+	public static TestConfig getEmptyTest(int length) {
+		return new TestConfig("EMPT",length, 0, "Empty test");
+	}
 }
