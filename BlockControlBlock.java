@@ -81,9 +81,12 @@ public class BlockControlBlock extends Block {
 //		tests.add(TestFactory.getScatteredMCTest(6*60, 6));
 //		tests.add(TestFactory.getScatteredMCTest(6*60, 5));
 //		tests.add(TestFactory.getScatteredMCTest(6*60, 4));
-//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get2CoralTest(6*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get2CoralTest(6*60, 4, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
 //		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+		tests.add(TestFactory.get2CoralTest(6*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+		tests.add(TestFactory.get2CoralTest(6*60, 4, CORAL_TYPE.GREEN, CORAL_TYPE.RED));		
 //		tests.add(TestFactory.get2CoralTest(6*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
 		
 
@@ -484,6 +487,7 @@ public class BlockControlBlock extends Block {
 			testNumber = testNum;
 			tcfg = getCurrentTest();
 		}
+		tcfg.setFacility(TestFactory.getTestFacility());
 		
 		killAll(world, x, y, z);
 		runNumber++;

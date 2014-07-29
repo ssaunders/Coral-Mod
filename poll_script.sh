@@ -308,7 +308,7 @@ num_tests=$(ls -1 | grep ^2014 | wc -l)
 echo "BEGINNING PROCESSING"
 if [ "$(ls | grep "Concat")" = "" ]
 then
-    echo $num_tests" tests found. Processing will take appx "$(echo "scale=2;$num_tests * 1.8"|bc)" min"
+    echo $num_tests" tests found. Processing will take between "$(echo "scale=2;$num_tests * 1.8"|bc)" and "$(echo "scale=2;$num_tests * 2.44"|bc)" min"
 else 
     echo "1 test found. Processing will take appx 1.8 min"
 fi

@@ -3,10 +3,11 @@ package coral;
 import coral.BlockCoral.CORAL_TYPE;
 
 public class TestFactory {
-	private static String facility;
+	private static String facility="none";
 	public static void setTestFacility(String fac) {
 		facility = fac;
 	}
+	public static String getTestFacility() { return facility; }
 	private static Point3D dims;
 	public static void setDims(int x, int y, int z) {
 		if(x > 0 && z > 0) {
@@ -27,7 +28,6 @@ public class TestFactory {
 		int halfX = dims.x/2;
 		int halfZ = dims.z/2;
 		TestConfig t = new TestConfig("LIN", length, eq, "Testing equation "+eq+" for"+type.name());
-		t.setFacility(facility);
 		
 		t.addSeed(halfX, halfZ-3, type);
 		t.addSeed(halfX, halfZ-2, type);
@@ -42,7 +42,6 @@ public class TestFactory {
 
 	public static TestConfig getScatteredTest(int length, int eq, CORAL_TYPE type) {
 		TestConfig t = new TestConfig("SCA",length, eq, "Scattered test for "+type.name()); //do we need notes?
-		t.setFacility(facility);
 		
 		int spacer = 10;
 		//creates a grid of coral
@@ -60,7 +59,7 @@ public class TestFactory {
 	public static TestConfig getScatteredMCTest(int length, int eq) {
 		CORAL_TYPE[] types = {CORAL_TYPE.RED, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN};
 		TestConfig t = new TestConfig("CSCA",length, eq, "Scatter color test"); //do we need notes?
-		t.setFacility(facility);
+
 		int kind = 0, ln = types.length;
 		
 //		int oneGreen=1;
@@ -93,7 +92,6 @@ public class TestFactory {
 	
 	public static TestConfig get4GroupTest(int length, int eq, CORAL_TYPE type ) {
 		TestConfig t = new TestConfig("4GT",length, eq, "4 group test for "+type+" using threshold of "+(eq+3) );	//!POF
-		t.setFacility(facility);
 		
 		int halfX = dims.x/2;
 		int halfZ = dims.z/2;
@@ -107,7 +105,6 @@ public class TestFactory {
 	
 	public static TestConfig get2CoralTest(int length, int eq, CORAL_TYPE typeA, CORAL_TYPE typeB) {
 		TestConfig t = new TestConfig("2CT",length, eq, "Two coral test with "+typeA+" and "+typeB+"using threshold of "+(eq+3) );	//!POF
-		t.setFacility(facility);
 		
 		int qtrX = dims.x/4;
 		int qtrZ = dims.z/4;
@@ -128,7 +125,6 @@ public class TestFactory {
 	
 	public static TestConfig getOneDirTest(int length, int eq, CORAL_TYPE type) {
 		TestConfig t = new TestConfig("1DIR",length, eq, "Single direction spread test for "+type.name()+" using threshold of "+(eq+3)); //!POF
-		t.setFacility(facility);
 		t.addSeed(1, 1, type);
 		return t;
 	}
@@ -136,7 +132,6 @@ public class TestFactory {
 	public static TestConfig getDiagonalTest(int length, int eq, CORAL_TYPE type) {
 		int x = 1, z = 1;
 		TestConfig t = new TestConfig("DIAG",length, eq, "Diagonal test for "+type.name());
-		t.setFacility(facility);
 		
 		t.addSeed(x++, z++, type);
 		t.addSeed(x++, z++, type);
@@ -153,7 +148,6 @@ public class TestFactory {
 	
 	public static TestConfig getFullTest(int length, int eq, CORAL_TYPE type) {
 		TestConfig t = new TestConfig("FUL",length, eq, "Full test for "+type.name());
-		t.setFacility(facility);
 		
 		for(int x = dims.x; x > 0; --x) {			
 			for(int z = dims.z; z > 0; --z) {
