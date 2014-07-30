@@ -7,6 +7,6 @@ public class CoralInfo {
 	CORAL_TYPE type;
 	
 	public String toString() {
-		return type+"@"+location.toPoint();
+		return "i"+type+"@"+location.toPoint();
 	}
 }

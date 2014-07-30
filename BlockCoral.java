@@ -8,8 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 @SuppressWarnings("unused")
 public class BlockCoral extends Block {
 	private boolean printMsgs = BlockControlBlock.showMessages();
@@ -270,6 +268,14 @@ public class BlockCoral extends Block {
 			healthMeter = new HashMap<Point3D, Integer>(50 * 50, .9f);
 		}
 	}
+	
+	public String toString(int x, int y, int z) {
+		return type+"@"+new Point3D(x,y,z).toPoint();
+	}
+	
+	public String toString() {
+		return type+"Coral";
+	}
 
 	private int supportsNumOfEq;
 	// // MINECRAFT FUNCTIONS // //
@@ -279,11 +285,6 @@ public class BlockCoral extends Block {
 		if(t == null) {	//if there is not a test going on, don't bother
 			return;
 		}
-		CoralInfo[] neighbors = new CoralInfo[8];
-		int numNeighbors = getNeighbors(world, x, y, z, neighbors);
-		int brightness = world.getBlockLightValue(x, y, z);
-
-		int healthModifier = -livingCost;
 		
 		if(printMsgs) {
 			Integer val = healthMeter.get(new Point3D(x,y,z));
@@ -295,6 +296,11 @@ public class BlockCoral extends Block {
 			}
 		}
 		
+		CoralInfo[] neighbors = new CoralInfo[8];
+		int numNeighbors = getNeighbors(world, x, y, z, neighbors);
+		int brightness = world.getBlockLightValue(x, y, z);
+		
+		int healthModifier = -livingCost;
 		switch (t.getGrowthEq()) {
 			case 0:
 				healthModifier += equation0(neighbors, numNeighbors, brightness);
@@ -316,6 +322,15 @@ public class BlockCoral extends Block {
 				break;
 			case 6:
 				healthModifier += equation4(neighbors, numNeighbors, 6, brightness);
+				break;
+			case 7:
+				healthModifier += equation7(neighbors, numNeighbors, 4, brightness);
+				break;
+			case 8:
+				healthModifier += equation7(neighbors, numNeighbors, 5, brightness);
+				break;
+			case 9:
+				healthModifier += equation7(neighbors, numNeighbors, 6, brightness);
 				break;
 			default:
 				System.out.println("!!!! Growth equation "+t.getGrowthEq()+" does not exist.");
@@ -602,7 +617,7 @@ public class BlockCoral extends Block {
 				);
 	}
 	
-	public static int numEqs = 7;	//MAKE SURE TO UPDATE THIS NUMBER
+	public static int numEqs = 10;	//MAKE SURE TO UPDATE THIS NUMBER
 	
 	/** Equation 0: Every Coral +/-1, light value adds 1-4 (not more than it's photo factor) NO DEATH RULE*/
 	private int equation0(CoralInfo[] neighbors, int numNeighbors, int lightLvl) {
@@ -662,6 +677,38 @@ public class BlockCoral extends Block {
 	/** Equation 4-6: Every Coral +/-1, crowding factor AND -enemies light value adds 1-4 (not more than it's photo factor) */
 	private int equation4(CoralInfo[] neighbors, int numNeighbors, int threshold, int lightLvl) {
 		int ngbrVal = 0, growth=0;
+		int friends = 0, enemies = 0;
+		
+		if(neighbors != null) {
+			for(int i = 0; i < numNeighbors; ++i) {
+				if(neighbors[i].type == this.type){
+					++friends;
+				} else {
+					++enemies;
+				}
+			}
+		}
+		
+		if(friends + enemies > threshold) {
+			ngbrVal = -2 - enemies;
+		} else {
+			ngbrVal = friends - enemies;
+		}
+		
+		lightLvl = (int)Math.ceil(lightLvl / 4.);
+		if(lightLvl < photoFactor) {
+			growth += lightLvl;
+		} else {
+			growth += photoFactor;
+		}
+		
+		return ngbrVal+growth;
+	}
+	
+	/** Equation 7-9: Every Coral +/-1, crowding factor AND -enemies light value adds 1-4 
+	 * (not more than it's photo factor). ADDED growthFactor*/
+	private int equation7(CoralInfo[] neighbors, int numNeighbors, int threshold, int lightLvl) {
+		int ngbrVal = 0, growth=growthFactor;
 		int friends = 0, enemies = 0;
 		
 		if(neighbors != null) {
