@@ -460,7 +460,6 @@ public class BlockControlBlock extends Block {
 			testNumber = testNum;
 			tcfg = getCurrentTest();
 		}
-		tcfg.setFacility(TestFactory.getTestFacility());
 		
 		killAll(world, x, y, z);
 		runNumber++;
@@ -473,6 +472,8 @@ public class BlockControlBlock extends Block {
 			}
 			else
 			{
+				tcfg.setFacility(TestFactory.getTestFacility());
+				
 				if(printMsgs) System.out.println("===> Beggining test "+testNumber+" at "+new Date()+". "+(testNumber+1)+" of "+getTotalNumTests() );
 				System.out.println("Estimated finish time for all tests: "+getFinishTime());
 				setupTestFolder();

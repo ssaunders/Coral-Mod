@@ -3,6 +3,7 @@ package coral;
 import coral.BlockCoral.CORAL_TYPE;
 
 public class TestFactory {
+	//Members
 	private static String facility="none";
 	public static void setTestFacility(String fac) {
 		facility = fac;
@@ -156,9 +157,5 @@ public class TestFactory {
 		}
 		
 		return t;
-	}
-	
-	public static TestConfig getEmptyTest(int length) {
-		return new TestConfig("EMPT",length, 0, "Empty test");
 	}
 }
