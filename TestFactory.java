@@ -1,5 +1,8 @@
 package coral;
 
+import java.awt.Point;
+import java.util.Random;
+
 import coral.BlockCoral.CORAL_TYPE;
 
 public class TestFactory {
@@ -24,7 +27,9 @@ public class TestFactory {
 			System.err.println("!!!! Attempted to set TestFactory dimensions to 0");
 		}
 	}
+	private static Random rGen = new Random();
 
+	//TEST GENERATORS
 	public static TestConfig getLineTest(int length, int eq, CORAL_TYPE type) {
 		int halfX = dims.x/2;
 		int halfZ = dims.z/2;
@@ -158,4 +163,86 @@ public class TestFactory {
 		
 		return t;
 	}
+
+	public static TestConfig getEmptyTest(int length) {
+		return new TestConfig("EMPT",length, 0, "Empty test");
+	}
+	
+	/**
+	 * Places coral of random types randomly
+	 * @param length	Length of time to run this test
+	 * @param eq		The equation to use for this test
+	 * @return			A test config
+	 */
+	public static TestConfig getCompletelyRandomTest(int length, int eq, CORAL_TYPE[] type_list) {
+		TestConfig t = new TestConfig("CRAN", length, eq, "Completely random test using eq "+eq);
+		t.setFacility(facility);
+		
+		int totalCoral = dims.x * dims.z;
+		int x, z;
+		for (int i = rGen.nextInt(totalCoral-10)+10; i >= 0; --i) {
+			x = rGen.nextInt(dims.x);
+			z = rGen.nextInt(dims.z);
+//			if()
+//			t.addSeed(x, z, type_list[rGen.nextInt(numTypes)]);
+			/* Add a 2d array the same size as the board. put a 1 when that spot is chosen*/
+		}
+		
+		return t;
+	}
+	
+	public static TestConfig getRandomFullTest(int length, int eq, CORAL_TYPE[] type_list) {
+		int numTypes = type_list.length;
+		TestConfig t = new TestConfig("RFUL", length, eq, "Completely random test using eq "+eq);
+		t.setFacility(facility);
+		
+		for(int x = dims.x; x > 0; --x) {			
+			for(int z = dims.z; z > 0; --z) {
+				t.addSeed(x, z, type_list[rGen.nextInt(numTypes)]);
+			}
+		}
+		return t;
+	}
+	
+	@SuppressWarnings("unused")
+	private class MockBoard {
+		private int[][] board;
+		private int count=0;
+		public int getCount() { return count; }
+		private static Random rGen = new Random();
+		
+		public MockBoard(int x, int z) {
+			board = new int[x][z];
+		}
+		
+		public void choose(int x, int z) {
+			board[x][z] += 1;
+		}
+		
+		public boolean safeChoose(int x, int z) {
+			if(board[x][z] == 0) {				
+				board[x][z] = 1;
+				return true;
+			} else {
+				return false;
+			}
+		}
+		public Point safeChoose() {
+			int x, z;
+			
+			do {
+				x = rGen.nextInt(dims.x);
+				z = rGen.nextInt(dims.z);
+			} while(!safeChoose(x, z));
+			
+			return new Point(x,z);
+		}
+		
+		public void clearBoard() {
+			board = new int[board.length][board[0].length];
+			count = 0;
+		}
+		
+	}
+	
 }
