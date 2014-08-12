@@ -364,28 +364,11 @@ public class BlockCoral extends Block {
 			return false;
 		}
 		
-		/*	Brightness values (getLightBrightness)
-		 *  1	
-		 * 	2	
-		 * 	3	0.058823526
-		 * 	4	0.08333333
-		 * 	5	0.11111113
-		 * 	6	0.14285712
-		 * 	7	0.1794872
-		 * 	8	0.22222225
-		 * 	9	0.2727273
-		 * 	10	0.33333334
-		 * 	11	0.40740743
-		 * 	12	0.50000006
-		 * 	13	0.61904764
-		 * 	14	0.77777773
-		 * 	15	1
-		 */
-		
 		//if the block is water and the block above it is water as well.
 		if(isWaterBlock && Coral.isWater(world, x, y + 1, z) && isSuitableGround(world, x, y-1, z)) {
 			return true;
 		}
+		
 //		check if stackable, if yes, mark stacked.
 //		if (world.getBlockId(x, y - 1, z) == Coral_Mod.Coral1.blockID && world.getBlockMetadata(x, y - 1, z) == 1) {
 //			if(blockID == Coral_Mod.Coral1.blockID && type == 1) {
@@ -410,8 +393,7 @@ public class BlockCoral extends Block {
 //			}
 //
 //		}
-		
-		//should light be a factor?
+
 		return (Coral.isWater(world, x, y + 1, z));
 	}
 

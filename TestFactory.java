@@ -209,7 +209,7 @@ public class TestFactory {
 		private int[][] board;
 		private int count=0;
 		public int getCount() { return count; }
-		private static Random rGen = new Random();
+		private Random rGen = new Random();
 		
 		public MockBoard(int x, int z) {
 			board = new int[x][z];

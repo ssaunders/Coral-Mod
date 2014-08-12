@@ -33,41 +33,50 @@ public class BlockControlBlock extends Block {
 		tests.add(TestFactory.getEmptyTest(1));
 		tests.get(0).addPrefix("trash");
 		
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.RED));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.BLUE));
-//		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.BLUE));
-		tests.add(TestFactory.getScatteredMCTest(6*60, 9));
-		tests.add(TestFactory.getScatteredMCTest(6*60, 8));
-		tests.add(TestFactory.getScatteredMCTest(6*60, 7));
-//		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-//		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
-////		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
-//		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.GREEN, CORAL_TYPE.RED));		
-////		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+		/* Standard set of tests 
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.get4GroupTest(stdTime*60, 1, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.RED));
+		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.getFullTest(stdTime*60, 3, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(stdTime*60, 2, CORAL_TYPE.BLUE));
+		tests.add(TestFactory.getFullTest(stdTime*60, 1, CORAL_TYPE.BLUE));
+		/**/
 		
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 9));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 8));
+//		tests.add(TestFactory.getScatteredMCTest(6*60, 7));
+		
+//		/* Two-color tests
+		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.BLUE, CORAL_TYPE.GREEN));
+		
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.GREEN, CORAL_TYPE.RED));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.GREEN, CORAL_TYPE.RED));	
+		
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 6, CORAL_TYPE.RED, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 5, CORAL_TYPE.RED, CORAL_TYPE.BLUE));
+//		tests.add(TestFactory.get2CoralTest(stdTime*60, 4, CORAL_TYPE.RED, CORAL_TYPE.BLUE));
+		/**/
 
 		int totalTime = getAllTestsApxRunTime();
 		
 		System.out.println("@@@@");
 		System.out.println("@@@@ There are "+getTotalNumTests()+" tests, which will take "+(totalTime/60)+"hrs "+(totalTime%60)+"min. Check back at "+getFinishTime() );
-		System.out.println("@@@@ Dims: "+getDims());
+		System.out.println("@@@@     Dims: "+getDims());
 	}
 	
 	public static String getFacilityName(World world, int x, int y, int z) { 
@@ -94,8 +103,8 @@ public class BlockControlBlock extends Block {
 	}
 	
 	/* GENERAL TEST INFORMATION */
-//	private static final Point3D TEST_DIMS = new Point3D(50,20,50);	/*	//50x50		
-	private static final Point3D TEST_DIMS = new Point3D(80,20,80);		//82x82		*/
+//	private static final Point3D TEST_DIMS = new Point3D(50,20,50);	/*	
+	private static final Point3D TEST_DIMS = new Point3D(80,20,80);	//	*/
 	private static Point3D blockCoor = null;
 	private static ArrayList<Point3D> otherBlockCoor=new ArrayList<Point3D>();
 		private static Point3D getBlockCoor() {
@@ -117,7 +126,7 @@ public class BlockControlBlock extends Block {
 			if(blockCoor != null && blockCoor.equals(k)){
 				blockCoor = null;
 			} else {
-				System.out.println("!!!! Tried to remove "+k+" but no value is there.");
+				System.out.println("!!!! Tried to remove "+k.toPoint()+" but no value is there.");
 			}
 			if(otherBlockCoor.size() > 0) {
 				blockCoor = otherBlockCoor.get(0);
@@ -360,8 +369,9 @@ public class BlockControlBlock extends Block {
 					return super.canPlaceBlockAt(world, x, y, z);
 				} else { System.out.println("!!!! Block Coordinates were not attached to a command block"); }
 			} else {
-				messagePlayers(world, "A coral command block already exists. To move the block, place on top of a red torch.");
-				System.out.println("A coral command block already exists. To move the block, place on top of a red torch.");
+				String msg = "A coral command block already exists at "+getBlockCoor().toPoint()+". To move the block, place on top of a red torch.";
+				messagePlayers(world, msg);
+				System.out.println(msg);
 				return false;
 			}
 		}
@@ -373,9 +383,9 @@ public class BlockControlBlock extends Block {
 	public boolean removeBlockByPlayer(World world, EntityPlayer player, int x, int y, int z) {
 		if(active){
 			if(world.getBlockId(x, y+1, z) == torchWood.blockID) {
+				getCurrentTest().endTest();
 				resetEnvironment(world, x, y, z);
 				active = false;
-				getCurrentTest().endTest();
 				clearBlockCoor(x, y, z);
 				return super.removeBlockByPlayer(world, player, x, y, z);
 			} else {				
@@ -385,9 +395,9 @@ public class BlockControlBlock extends Block {
 				return false;
 			}
 		} else {
-			resetEnvironment(world, x, y, z);
 			TestConfig tcfg = getCurrentTest();
 			if(tcfg != null) tcfg.endTest();
+			resetEnvironment(world, x, y, z);
 			clearBlockCoor(x, y, z);
 			return super.removeBlockByPlayer(world, player, x, y, z);
 		}

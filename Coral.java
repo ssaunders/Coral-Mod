@@ -1,3 +1,15 @@
+/**
+ * Living Coral mod
+ * 
+ * Author: Stephen Saunders
+ * Created for an undergraduate thesis at USU
+ * 
+ * Credit:
+ * Project drew minor elements from Nandonalt's Coral Reef mod, now maintained by q3hardcore.
+ *   https://github.com/q3hardcore/CoralMod/blob/master/mod_coral.java
+ *   http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1282290-1-6-4-1-6-2-1-5-x-1-4-5-etc-coral-reef-mod
+ */
+
 package coral;
 
 import net.minecraft.block.Block;
